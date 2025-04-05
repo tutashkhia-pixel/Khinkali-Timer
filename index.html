@@ -4,102 +4,462 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Khinkali Timer</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥟</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>">
   <style>
+    :root {
+      --primary-color: #e74c3c;
+      --secondary-color: #c0392b;
+      --accent-color: #f1c40f;
+      --text-color: #ffffff;
+      --dark-bg: rgba(0, 0, 0, 0.7);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
       font-family: 'Georgia', serif;
-      background: url('https://upload.wikimedia.org/wikipedia/commons/e/e3/Khinkali.jpg') center/cover no-repeat;
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                  url('https://upload.wikimedia.org/wikipedia/commons/e/e3/Khinkali.jpg') center/cover fixed;
+      color: var(--text-color);
+      text-shadow: 2px 2px 4px #000;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      color: white;
-      text-shadow: 2px 2px 4px #000;
-      margin: 0;
+      overflow: hidden;
     }
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-    input, button {
-      font-size: 1.2rem;
-      padding: 0.5rem;
-      margin: 0.5rem;
-    }
-    #countdown {
-      font-size: 4rem;
-      margin-top: 2rem;
-    }
-    button {
-      background-color: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #c0392b;
-    }
+    
     .container {
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 2rem;
-      border-radius: 10px;
+      background-color: var(--dark-bg);
+      padding: 2.5rem;
+      border-radius: 15px;
       text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      max-width: 90%;
+      width: 500px;
+      animation: fadeIn 0.5s ease-in;
     }
+    
+    .khinkali-logo {
+      width: 200px;
+      margin: 0 auto 1.5rem;
+      animation: bounce 2s infinite;
+      transform-origin: center bottom;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent-color);
+    }
+    
+    .input-container {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    input {
+      width: 100%;
+      font-size: 1.4rem;
+      padding: 0.8rem 1rem;
+      border: none;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.9);
+      text-align: center;
+      font-family: inherit;
+    }
+    
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--accent-color);
+    }
+    
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    
+    button {
+      font-size: 1.2rem;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 50px;
+      background-color: var(--primary-color);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+      font-weight: bold;
+    }
+    
+    button:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    #countdown {
+      font-size: 5rem;
+      font-weight: bold;
+      margin: 1.5rem 0;
+      min-height: 5.5rem;
+      color: var(--accent-color);
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+    }
+    
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 1.5rem;
+    }
+    
+    .preset-btn {
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .preset-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    
+    .footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-20px); }
+      60% { transform: translateY(-10px); }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .timer-complete {
+      animation: pulse 0.5s infinite;
+    }
+    
+    /* Dark mode toggle */
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      z-index: 10;
+    }
+    
+    /* Settings panel */
+    .settings-panel {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--dark-bg);
+      padding: 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      max-width: 90%;
+      width: 300px;
+      display: none;
+      z-index: 10;
+    }
+    
+    .settings-panel.active {
+      display: block;
+    }
+    
+    .settings-btn {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    
+    .settings-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
     @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
       h1 {
         font-size: 2rem;
       }
+      
+      .khinkali-logo {
+        width: 150px;
+      }
+      
       #countdown {
-        font-size: 3rem;
+        font-size: 4rem;
       }
-      input, button {
-        width: 80%;
-        max-width: 300px;
+      
+      .presets {
+        gap: 8px;
       }
-      body {
-        background-position: center;
+      
+      .preset-btn {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
       }
     }
   </style>
 </head>
 <body>
+  <button class="theme-toggle" id="themeToggle">🌓</button>
+  
   <div class="container">
+    <img src="https://i.imgur.com/BIBVpbY.png" alt="Khinkali Timer" class="khinkali-logo" id="khinkaliLogo">
     <h1>🥟 Khinkali Timer</h1>
-    <input type="number" id="minutes" placeholder="Minutes" min="1"/>
-    <button onclick="startTimer()">Start Cooking</button>
+    
+    <div class="input-container">
+      <input type="text" id="minutes" placeholder="Enter time (e.g. 15m, 2h30m)" autofocus>
+    </div>
+    
+    <div class="button-container">
+      <button onclick="startTimer()">Start Cooking</button>
+      <button onclick="resetTimer()" id="resetBtn" style="display: none; background-color: #3498db;">Reset</button>
+    </div>
+    
     <div id="countdown"></div>
+    
+    <div class="presets">
+      <button class="preset-btn" onclick="setPreset(5)">5 min</button>
+      <button class="preset-btn" onclick="setPreset(10)">10 min</button>
+      <button class="preset-btn" onclick="setPreset(15)">15 min</button>
+      <button class="preset-btn" onclick="setPreset(30)">30 min</button>
+      <button class="preset-btn" onclick="setPreset(45)">Khinkali</button>
+    </div>
+    
+    <div class="footer">
+      <button class="settings-btn" onclick="toggleSettings()">Help and Settings</button>
+      <p>Made with 🥟 & ❤️</p>
+    </div>
+  </div>
+  
+  <div class="settings-panel" id="settingsPanel">
+    <h3>About Khinkali Timer</h3>
+    <p>Perfect for timing your Georgian dumplings or any cooking task!</p>
+    <br>
+    <h4>Time Format</h4>
+    <p>Enter time as numbers or in format: 1h30m, 45m, 90s</p>
+    <br>
+    <h4>Sound Settings</h4>
+    <label>
+      <input type="checkbox" id="soundEnabled" checked>
+      Enable sound when timer completes
+    </label>
+    <br><br>
+    <button class="settings-btn" onclick="toggleSettings()">Close</button>
   </div>
   
   <audio id="timerSound" preload="auto">
-    <source src="https://freesound.org/data/previews/536/536782_11861866-lq.mp3" type="audio/mpeg">
+    <source src="https://soundbible.com/grab.php?id=1746&type=mp3" type="audio/mpeg">
   </audio>
   
   <script>
     let countdownInterval;
+    let endTime;
+    let timerRunning = false;
+    
+    // Parse time input
+    function parseTimeInput(input) {
+      // If just a number, assume minutes
+      if (/^\d+$/.test(input)) {
+        return parseInt(input) * 60000;
+      }
+      
+      // Parse formats like "1h30m", "45m", "90s", etc.
+      let totalMs = 0;
+      const hourMatch = input.match(/(\d+)h/);
+      const minMatch = input.match(/(\d+)m/);
+      const secMatch = input.match(/(\d+)s/);
+      
+      if (hourMatch) totalMs += parseInt(hourMatch[1]) * 3600000;
+      if (minMatch) totalMs += parseInt(minMatch[1]) * 60000;
+      if (secMatch) totalMs += parseInt(secMatch[1]) * 1000;
+      
+      return totalMs;
+    }
+    
     function startTimer() {
-      const minutes = parseInt(document.getElementById('minutes').value);
-      if (!minutes || minutes <= 0) {
-        alert("Please enter a valid number of minutes.");
+      const input = document.getElementById('minutes').value;
+      if (!input) {
+        alert("Please enter a valid time.");
         return;
       }
-      const endTime = Date.now() + minutes * 60000;
+      
+      const duration = parseTimeInput(input);
+      if (!duration || duration <= 0) {
+        alert("Please enter a valid time format (e.g. 15m, 2h30m, or just a number for minutes).");
+        return;
+      }
+      
+      endTime = Date.now() + duration;
       clearInterval(countdownInterval);
+      timerRunning = true;
+      
+      // Change UI for active timer
+      document.getElementById('resetBtn').style.display = 'block';
+      document.getElementById('khinkaliLogo').classList.add('bounce');
+      
       countdownInterval = setInterval(() => {
         const remaining = endTime - Date.now();
         if (remaining <= 0) {
-          document.getElementById('countdown').textContent = "🍽 Khinkali's ready!";
-          document.getElementById('timerSound').play();
-          clearInterval(countdownInterval);
+          timerComplete();
         } else {
-          const mins = Math.floor(remaining / 60000);
-          const secs = Math.floor((remaining % 60000) / 1000);
-          document.getElementById('countdown').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+          updateTimerDisplay(remaining);
         }
       }, 1000);
+      
+      // Initial display update
+      updateTimerDisplay(duration);
     }
+    
+    function updateTimerDisplay(remaining) {
+      const hours = Math.floor(remaining / 3600000);
+      const minutes = Math.floor((remaining % 3600000) / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      
+      let display = '';
+      if (hours > 0) {
+        display += `${hours}:`;
+      }
+      
+      display += `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      document.getElementById('countdown').textContent = display;
+    }
+    
+    function timerComplete() {
+      clearInterval(countdownInterval);
+      document.getElementById('countdown').textContent = "🍽 Khinkali's ready!";
+      document.getElementById('countdown').classList.add('timer-complete');
+      
+      // Play sound if enabled
+      if (document.getElementById('soundEnabled').checked) {
+        const sound = document.getElementById('timerSound');
+        // Using both methods to increase chance of sound playing
+        sound.play().catch(e => console.log("Could not autoplay sound: ", e));
+        
+        // Create a temporary button for user interaction
+        const tempButton = document.createElement('button');
+        tempButton.textContent = "🔊 Play Sound";
+        tempButton.style.marginTop = "10px";
+        tempButton.onclick = function() {
+          sound.play();
+          this.remove();
+        };
+        document.getElementById('countdown').after(tempButton);
+      }
+      
+      timerRunning = false;
+    }
+    
+    function resetTimer() {
+      clearInterval(countdownInterval);
+      document.getElementById('countdown').textContent = "";
+      document.getElementById('countdown').classList.remove('timer-complete');
+      document.getElementById('resetBtn').style.display = 'none';
+      document.getElementById('khinkaliLogo').classList.remove('bounce');
+      timerRunning = false;
+    }
+    
+    function setPreset(minutes) {
+      document.getElementById('minutes').value = minutes === 45 ? "45m" : `${minutes}m`;
+      startTimer();
+    }
+    
+    function toggleSettings() {
+      document.getElementById('settingsPanel').classList.toggle('active');
+    }
+    
+    // Toggle between light and dark theme
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      document.body.classList.toggle('light-theme');
+      this.textContent = document.body.classList.contains('light-theme') ? '🌑' : '🌓';
+    });
+    
+    // Browser notification permission
+    if ('Notification' in window) {
+      Notification.requestPermission();
+    }
+    
+    // Keep screen awake during active timer
+    let wakeLock = null;
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+        } catch (err) {
+          console.log(`Could not keep screen awake: ${err.message}`);
+        }
+      }
+    }
+    
+    // Handle visibility change
+    document.addEventListener('visibilitychange', async () => {
+      if (timerRunning && document.visibilityState === 'visible') {
+        requestWakeLock();
+      }
+    });
+    
+    // Handle sound permission issues with a user interaction
+    document.body.addEventListener('click', function() {
+      const sound = document.getElementById('timerSound');
+      sound.muted = false;
+      sound.load();
+    }, { once: true });
   </script>
 </body>
 </html>

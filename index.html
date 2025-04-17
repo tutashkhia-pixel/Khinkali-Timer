@@ -57,6 +57,11 @@
       border: none;
       cursor: pointer;
     }
+    #statusMessage {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #a0e7e5;
+    }
   </style>
 </head>
 
@@ -72,6 +77,7 @@
   </div>
 
   <div id="countdown" class="timer">00:00</div>
+  <div id="statusMessage"></div>
   <div class="footer">Bring focus to your study or work. Powered by Khinkali 🥟</div>
 
   <script>
@@ -80,6 +86,7 @@
     let isPaused = false;
 
     const display = document.getElementById("countdown");
+    const statusMessage = document.getElementById("statusMessage");
 
     function updateDisplay() {
       const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
@@ -94,7 +101,7 @@
 
     function parseTime(input) {
       let totalSeconds = 0;
-      const pattern = /(\d+)([hms])/gi;
+      const pattern = /(\\d+)([hms])/gi;
       let match;
       while ((match = pattern.exec(input)) !== null) {
         const val = parseInt(match[1]);
@@ -109,19 +116,20 @@
     function startTimer() {
       clearInterval(timerInterval);
       let input = document.getElementById('timeInput').value.trim();
-if (/^\d+$/.test(input)) {
-  input += 'm'; // assume it's minutes if only digits
-}
+      if (/^\\d+$/.test(input)) {
+        input += 'm'; // assume minutes
+      }
 
-const totalSeconds = parseTime(input);
-if (!totalSeconds) {
-  alert("Please enter a valid time (e.g. 17m30s, 1h, or 90s).");
-  return;
-}
+      const totalSeconds = parseTime(input);
+      if (!totalSeconds) {
+        alert("Please enter a valid time (e.g. 17m30s, 1h, or 90s).");
+        return;
+      }
 
       seconds = totalSeconds;
       updateDisplay();
       isPaused = false;
+      statusMessage.textContent = "⏱ Timer started!";
 
       timerInterval = setInterval(() => {
         if (!isPaused && seconds > 0) {
@@ -130,21 +138,23 @@ if (!totalSeconds) {
         } else if (seconds <= 0) {
           playSound();
           clearInterval(timerInterval);
+          statusMessage.textContent = "✅ Time’s up!";
         }
       }, 1000);
     }
 
     function togglePause() {
       isPaused = !isPaused;
+      statusMessage.textContent = isPaused ? "⏸ Paused" : "▶️ Resumed";
     }
 
     function resetTimer() {
       clearInterval(timerInterval);
       seconds = 0;
       updateDisplay();
+      statusMessage.textContent = "🔁 Timer reset.";
     }
 
-    // Optional: Start timer if URL path includes time (e.g. /5m)
     function parseFromPath() {
       const path = window.location.pathname.substring(1).toLowerCase();
       if (path) {

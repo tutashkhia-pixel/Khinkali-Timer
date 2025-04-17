@@ -65,7 +65,7 @@
   <h1>Khinkali Timer</h1>
 
   <div class="timer-controls">
-    <input id="timeInput" placeholder="e.g. 17m30s or 1h" />
+    <input id="timeInput" placeholder="Click to enter time (e.g. 5m, 1h30m, 90s)" />
     <button onclick="startTimer()">Start</button>
     <button onclick="togglePause()">Pause</button>
     <button onclick="resetTimer()">Reset</button>
@@ -108,12 +108,16 @@
 
     function startTimer() {
       clearInterval(timerInterval);
-      const input = document.getElementById('timeInput').value.trim();
-      const totalSeconds = parseTime(input);
-      if (!totalSeconds) {
-        alert("Please enter a valid time (e.g. 17m30s, 1h, or 90s).");
-        return;
-      }
+      let input = document.getElementById('timeInput').value.trim();
+if (/^\d+$/.test(input)) {
+  input += 'm'; // assume it's minutes if only digits
+}
+
+const totalSeconds = parseTime(input);
+if (!totalSeconds) {
+  alert("Please enter a valid time (e.g. 17m30s, 1h, or 90s).");
+  return;
+}
 
       seconds = totalSeconds;
       updateDisplay();

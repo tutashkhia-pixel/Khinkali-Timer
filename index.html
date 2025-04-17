@@ -37,96 +37,54 @@
       font-size: 0.9rem;
       opacity: 0.7;
     }
+    .timer-controls {
+      margin-top: 2rem;
+    }
+    #timeInput {
+      padding: 10px;
+      font-size: 16px;
+      width: 200px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px 5px;
+      border-radius: 6px;
+      background-color: #a65cf1;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
   </style>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const userLang = navigator.language || navigator.userLanguage;
-      const langs = {
-        'ka': {
-          title: "ხინკალი ტაიმერი",
-          footer: "მოტივაცია და ფოკუსი შენი მიზნებისკენ 🥟",
-          quotes: [
-            "ერთბაშად ერთი საქმე – ერთი ხინკალი!",
-            "თავი შეინარჩუნე სიმშვიდით.",
-            "ყველაფერი იწყება ერთჯერადი ფოკუსით.",
-            "ხინკალი გირჩევს: დაისვენე გონივრულად.",
-            "მუშაობა როცა გშია – სხვა დონეა!"
-          ]
-        },
-        'es': {
-          title: "Temporizador Khinkali",
-          footer: "Enfócate como un Khinkali 🥟",
-          quotes: [
-            "Un bocado a la vez, una tarea a la vez.",
-            "Khinkali dice: ¡descansa sabiamente!",
-            "Concéntrate y gana.",
-            "Estudia con sabor.",
-            "La motivación huele a éxito."
-          ]
-        },
-        'fr': {
-          title: "Minuteur Khinkali",
-          footer: "Concentration et saveur 🥟",
-          quotes: [
-            "Un Khinkali à la fois, une tâche à la fois.",
-            "Khinkali recommande: repos stratégique.",
-            "Concentre-toi, savoure ta victoire.",
-            "Étudie comme un pro du Khinkali.",
-            "La vapeur du succès commence ici."
-          ]
-        }
-      };
-
-      const langCode = userLang.split('-')[0];
-      if (langs[langCode]) {
-        const shouldSwitch = confirm(`Would you like to view this site in ${langCode.toUpperCase()}?`);
-        if (shouldSwitch) {
-          const lang = langs[langCode];
-          document.querySelector("h1").textContent = lang.title;
-          document.title = lang.title;
-          const quote = lang.quotes[Math.floor(Math.random() * lang.quotes.length)];
-          document.querySelector(".footer").textContent = quote;
-        }
-      }
-    });
-  </script>
 </head>
 
 <body>
   <img src="logo.png" alt="Khinkali" class="khinkali" />
   <h1>Khinkali Timer</h1>
-<div class="timer-controls">
-  <input id="timeInput" placeholder="e.g. 17m30s or 1h" />
-  <button onclick="startTimer()">Start</button>
-</div>
+
+  <div class="timer-controls">
+    <input id="timeInput" placeholder="e.g. 17m30s or 1h" />
+    <button onclick="startTimer()">Start</button>
+    <button onclick="togglePause()">Pause</button>
+    <button onclick="resetTimer()">Reset</button>
+  </div>
+
   <div id="countdown" class="timer">00:00</div>
   <div class="footer">Bring focus to your study or work. Powered by Khinkali 🥟</div>
 
   <script>
-    const quotes = [
-      "Stay dumpling-focused!",
-      "One bite at a time, one task at a time.",
-      "Steamy progress beats burnout.",
-      "Khinkali knows: Rest = Power.",
-      "Savor the silence. Focus now."
-    ];
-    document.querySelector(".footer").textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    let seconds = 0;
+    let timerInterval = null;
+    let isPaused = false;
 
-    function parseDurationFromPath() {
-      const path = window.location.pathname.substring(1).toLowerCase();
-      const match = path.match(/(\d+)(minutes|minute|min|m)/);
-      if (!match) return 0;
-      return parseInt(match[1]) * 60;
-    }
-
-    let seconds = parseDurationFromPath();
     const display = document.getElementById("countdown");
 
     function updateDisplay() {
       const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
       const secs = String(seconds % 60).padStart(2, '0');
-      display.textContent = \`\${mins}:\${secs}\`;
+      display.textContent = `${mins}:${secs}`;
     }
 
     function playSound() {
@@ -134,18 +92,65 @@
       beep.play();
     }
 
-    function tick() {
-      if (seconds > 0) {
-        seconds--;
-        updateDisplay();
-      } else {
-        playSound();
-        clearInterval(timer);
+    function parseTime(input) {
+      let totalSeconds = 0;
+      const pattern = /(\d+)([hms])/gi;
+      let match;
+      while ((match = pattern.exec(input)) !== null) {
+        const val = parseInt(match[1]);
+        const unit = match[2].toLowerCase();
+        if (unit === 'h') totalSeconds += val * 3600;
+        else if (unit === 'm') totalSeconds += val * 60;
+        else if (unit === 's') totalSeconds += val;
+      }
+      return totalSeconds;
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      const input = document.getElementById('timeInput').value.trim();
+      const totalSeconds = parseTime(input);
+      if (!totalSeconds) {
+        alert("Please enter a valid time (e.g. 17m30s, 1h, or 90s).");
+        return;
+      }
+
+      seconds = totalSeconds;
+      updateDisplay();
+      isPaused = false;
+
+      timerInterval = setInterval(() => {
+        if (!isPaused && seconds > 0) {
+          seconds--;
+          updateDisplay();
+        } else if (seconds <= 0) {
+          playSound();
+          clearInterval(timerInterval);
+        }
+      }, 1000);
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      seconds = 0;
+      updateDisplay();
+    }
+
+    // Optional: Start timer if URL path includes time (e.g. /5m)
+    function parseFromPath() {
+      const path = window.location.pathname.substring(1).toLowerCase();
+      if (path) {
+        document.getElementById('timeInput').value = path;
+        startTimer();
       }
     }
 
     updateDisplay();
-    const timer = setInterval(tick, 1000);
+    parseFromPath();
   </script>
 
   <audio id="alarm-sound">
@@ -161,7 +166,15 @@
     const userLang = (navigator.language || 'en').split('-')[0];
     const alarmAudio = document.getElementById("alarm-sound");
     alarmAudio.src = langAudioMap[userLang] || langAudioMap['en'];
+
+    const quotes = [
+      "Stay dumpling-focused!",
+      "One bite at a time, one task at a time.",
+      "Steamy progress beats burnout.",
+      "Khinkali knows: Rest = Power.",
+      "Savor the silence. Focus now."
+    ];
+    document.querySelector(".footer").textContent = quotes[Math.floor(Math.random() * quotes.length)];
   </script>
 </body>
-
 </html>

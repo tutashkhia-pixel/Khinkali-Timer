@@ -2,464 +2,162 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Khinkali Timer</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>">
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <meta property="og:image" content="logo.png">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
-    :root {
-      --primary-color: #e74c3c;
-      --secondary-color: #c0392b;
-      --accent-color: #f1c40f;
-      --text-color: #ffffff;
-      --dark-bg: rgba(0, 0, 0, 0.7);
-    }
-    
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
     body {
-      font-family: 'Georgia', serif;
-      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                  url('https://upload.wikimedia.org/wikipedia/commons/e/e3/Khinkali.jpg') center/cover fixed;
-      color: var(--text-color);
-      text-shadow: 2px 2px 4px #000;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    
-    .container {
-      background-color: var(--dark-bg);
-      padding: 2.5rem;
-      border-radius: 15px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #121212;
+      color: #f5f5f5;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      max-width: 90%;
-      width: 500px;
-      animation: fadeIn 0.5s ease-in;
+      padding: 3rem;
     }
-    
-    .khinkali-logo {
-      width: 200px;
-      margin: 0 auto 1.5rem;
-      animation: bounce 2s infinite;
-      transform-origin: center bottom;
-    }
-    
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--accent-color);
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
     }
-    
-    .input-container {
-      position: relative;
-      margin-bottom: 1.5rem;
-    }
-    
-    input {
-      width: 100%;
-      font-size: 1.4rem;
-      padding: 0.8rem 1rem;
-      border: none;
-      border-radius: 50px;
-      background: rgba(255, 255, 255, 0.9);
-      text-align: center;
-      font-family: inherit;
-    }
-    
-    input:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px var(--accent-color);
-    }
-    
-    .button-container {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 1.5rem;
-    }
-    
-    button {
-      font-size: 1.2rem;
-      padding: 0.8rem 1.5rem;
-      border: none;
-      border-radius: 50px;
-      background-color: var(--primary-color);
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-family: inherit;
-      font-weight: bold;
-    }
-    
-    button:hover {
-      background-color: var(--secondary-color);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    }
-    
-    button:active {
-      transform: translateY(1px);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-    
-    #countdown {
+    .timer {
       font-size: 5rem;
-      font-weight: bold;
-      margin: 1.5rem 0;
-      min-height: 5.5rem;
-      color: var(--accent-color);
-      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
-    }
-    
-    .presets {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 1.5rem;
-    }
-    
-    .preset-btn {
-      font-size: 1rem;
-      padding: 0.5rem 1rem;
-      background-color: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .preset-btn:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-    }
-    
-    .footer {
       margin-top: 2rem;
+    }
+    .khinkali {
+      width: 120px;
+      margin: 2rem auto;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    .footer {
+      margin-top: 3rem;
       font-size: 0.9rem;
       opacity: 0.7;
     }
-    
-    .footer a {
-      color: var(--accent-color);
-      text-decoration: none;
-    }
-    
-    .footer a:hover {
-      text-decoration: underline;
-    }
-    
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-20px); }
-      60% { transform: translateY(-10px); }
-    }
-    
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    
-    .timer-complete {
-      animation: pulse 0.5s infinite;
-    }
-    
-    /* Dark mode toggle */
-    .theme-toggle {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 1.5rem;
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      z-index: 10;
-    }
-    
-    /* Settings panel */
-    .settings-panel {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: var(--dark-bg);
-      padding: 1rem;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      max-width: 90%;
-      width: 300px;
-      display: none;
-      z-index: 10;
-    }
-    
-    .settings-panel.active {
-      display: block;
-    }
-    
-    .settings-btn {
-      background: none;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      color: white;
-      font-size: 0.9rem;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
-    
-    .settings-btn:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    @media (max-width: 768px) {
-      .container {
-        padding: 1.5rem;
-      }
-      
-      h1 {
-        font-size: 2rem;
-      }
-      
-      .khinkali-logo {
-        width: 150px;
-      }
-      
-      #countdown {
-        font-size: 4rem;
-      }
-      
-      .presets {
-        gap: 8px;
-      }
-      
-      .preset-btn {
-        font-size: 0.9rem;
-        padding: 0.4rem 0.8rem;
-      }
-    }
   </style>
-</head>
-<body>
-  <button class="theme-toggle" id="themeToggle">🌓</button>
-  
-  <div class="container">
-    <div style="margin: 0 auto 1.5rem; width: 100px; height: 100px; animation: bounce 2s infinite;">   <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">     <path d="M50,20 C30,20 20,40 20,60 C20,80 40,90 50,90 C60,90 80,80 80,60 C80,40 70,20 50,20" fill="#e7b589" />     <path d="M35,60 C35,60 45,70 65,60" stroke="#8b4513" stroke-width="2" stroke-linecap="round" />     <circle cx="65" cy="30" r="12" fill="#f1c40f" />     <circle cx="65" cy="30" r="10" fill="white" />     <line x1="65" y1="22" x2="65" y2="30" stroke="black" stroke-width="2" />     <line x1="65" y1="30" x2="72" y2="35" stroke="black" stroke-width="2" />     <circle cx="65" cy="30" r="2" fill="black" />   </svg> </div>
-    <h1>🥟 Khinkali Timer</h1>
-    
-    <div class="input-container">
-      <input type="text" id="minutes" placeholder="Enter time (e.g. 15m, 2h30m)" autofocus>
-    </div>
-    
-    <div class="button-container">
-      <button onclick="startTimer()">Start Cooking</button>
-      <button onclick="resetTimer()" id="resetBtn" style="display: none; background-color: #3498db;">Reset</button>
-    </div>
-    
-    <div id="countdown"></div>
-    
-    <div class="presets">
-      <button class="preset-btn" onclick="setPreset(5)">5 min</button>
-      <button class="preset-btn" onclick="setPreset(10)">10 min</button>
-      <button class="preset-btn" onclick="setPreset(15)">15 min</button>
-      <button class="preset-btn" onclick="setPreset(30)">30 min</button>
-      <button class="preset-btn" onclick="setPreset(45)">Khinkali</button>
-    </div>
-    
-    <div class="footer">
-      <button class="settings-btn" onclick="toggleSettings()">Help and Settings</button>
-      <p>Made with 🥟 & ❤️</p>
-    </div>
-  </div>
-  
-  <div class="settings-panel" id="settingsPanel">
-    <h3>About Khinkali Timer</h3>
-    <p>Perfect for timing your Georgian dumplings or any cooking task!</p>
-    <br>
-    <h4>Time Format</h4>
-    <p>Enter time as numbers or in format: 1h30m, 45m, 90s</p>
-    <br>
-    <h4>Sound Settings</h4>
-    <label>
-      <input type="checkbox" id="soundEnabled" checked>
-      Enable sound when timer completes
-    </label>
-    <br><br>
-    <button class="settings-btn" onclick="toggleSettings()">Close</button>
-  </div>
-  
-  <audio id="timerSound" preload="auto">
-    <source src="https://soundbible.com/grab.php?id=1746&type=mp3" type="audio/mpeg">
-  </audio>
-  
+
   <script>
-    let countdownInterval;
-    let endTime;
-    let timerRunning = false;
-    
-    // Parse time input
-    function parseTimeInput(input) {
-      // If just a number, assume minutes
-      if (/^\d+$/.test(input)) {
-        return parseInt(input) * 60000;
-      }
-      
-      // Parse formats like "1h30m", "45m", "90s", etc.
-      let totalMs = 0;
-      const hourMatch = input.match(/(\d+)h/);
-      const minMatch = input.match(/(\d+)m/);
-      const secMatch = input.match(/(\d+)s/);
-      
-      if (hourMatch) totalMs += parseInt(hourMatch[1]) * 3600000;
-      if (minMatch) totalMs += parseInt(minMatch[1]) * 60000;
-      if (secMatch) totalMs += parseInt(secMatch[1]) * 1000;
-      
-      return totalMs;
-    }
-    
-    function startTimer() {
-      const input = document.getElementById('minutes').value;
-      if (!input) {
-        alert("Please enter a valid time.");
-        return;
-      }
-      
-      const duration = parseTimeInput(input);
-      if (!duration || duration <= 0) {
-        alert("Please enter a valid time format (e.g. 15m, 2h30m, or just a number for minutes).");
-        return;
-      }
-      
-      endTime = Date.now() + duration;
-      clearInterval(countdownInterval);
-      timerRunning = true;
-      
-      // Change UI for active timer
-      document.getElementById('resetBtn').style.display = 'block';
-      document.getElementById('khinkaliLogo').classList.add('bounce');
-      
-      countdownInterval = setInterval(() => {
-        const remaining = endTime - Date.now();
-        if (remaining <= 0) {
-          timerComplete();
-        } else {
-          updateTimerDisplay(remaining);
+    document.addEventListener("DOMContentLoaded", function () {
+      const userLang = navigator.language || navigator.userLanguage;
+      const langs = {
+        'ka': {
+          title: "ხინკალი ტაიმერი",
+          footer: "მოტივაცია და ფოკუსი შენი მიზნებისკენ 🥟",
+          quotes: [
+            "ერთბაშად ერთი საქმე – ერთი ხინკალი!",
+            "თავი შეინარჩუნე სიმშვიდით.",
+            "ყველაფერი იწყება ერთჯერადი ფოკუსით.",
+            "ხინკალი გირჩევს: დაისვენე გონივრულად.",
+            "მუშაობა როცა გშია – სხვა დონეა!"
+          ]
+        },
+        'es': {
+          title: "Temporizador Khinkali",
+          footer: "Enfócate como un Khinkali 🥟",
+          quotes: [
+            "Un bocado a la vez, una tarea a la vez.",
+            "Khinkali dice: ¡descansa sabiamente!",
+            "Concéntrate y gana.",
+            "Estudia con sabor.",
+            "La motivación huele a éxito."
+          ]
+        },
+        'fr': {
+          title: "Minuteur Khinkali",
+          footer: "Concentration et saveur 🥟",
+          quotes: [
+            "Un Khinkali à la fois, une tâche à la fois.",
+            "Khinkali recommande: repos stratégique.",
+            "Concentre-toi, savoure ta victoire.",
+            "Étudie comme un pro du Khinkali.",
+            "La vapeur du succès commence ici."
+          ]
         }
-      }, 1000);
-      
-      // Initial display update
-      updateTimerDisplay(duration);
-    }
-    
-    function updateTimerDisplay(remaining) {
-      const hours = Math.floor(remaining / 3600000);
-      const minutes = Math.floor((remaining % 3600000) / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
-      
-      let display = '';
-      if (hours > 0) {
-        display += `${hours}:`;
-      }
-      
-      display += `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      document.getElementById('countdown').textContent = display;
-    }
-    
-    function timerComplete() {
-      clearInterval(countdownInterval);
-      document.getElementById('countdown').textContent = "🍽 Khinkali's ready!";
-      document.getElementById('countdown').classList.add('timer-complete');
-      
-      // Play sound if enabled
-      if (document.getElementById('soundEnabled').checked) {
-        const sound = document.getElementById('timerSound');
-        // Using both methods to increase chance of sound playing
-        sound.play().catch(e => console.log("Could not autoplay sound: ", e));
-        
-        // Create a temporary button for user interaction
-        const tempButton = document.createElement('button');
-        tempButton.textContent = "🔊 Play Sound";
-        tempButton.style.marginTop = "10px";
-        tempButton.onclick = function() {
-          sound.play();
-          this.remove();
-        };
-        document.getElementById('countdown').after(tempButton);
-      }
-      
-      timerRunning = false;
-    }
-    
-    function resetTimer() {
-      clearInterval(countdownInterval);
-      document.getElementById('countdown').textContent = "";
-      document.getElementById('countdown').classList.remove('timer-complete');
-      document.getElementById('resetBtn').style.display = 'none';
-      document.getElementById('khinkaliLogo').classList.remove('bounce');
-      timerRunning = false;
-    }
-    
-    function setPreset(minutes) {
-      document.getElementById('minutes').value = minutes === 45 ? "45m" : `${minutes}m`;
-      startTimer();
-    }
-    
-    function toggleSettings() {
-      document.getElementById('settingsPanel').classList.toggle('active');
-    }
-    
-    // Toggle between light and dark theme
-    document.getElementById('themeToggle').addEventListener('click', function() {
-      document.body.classList.toggle('light-theme');
-      this.textContent = document.body.classList.contains('light-theme') ? '🌑' : '🌓';
-    });
-    
-    // Browser notification permission
-    if ('Notification' in window) {
-      Notification.requestPermission();
-    }
-    
-    // Keep screen awake during active timer
-    let wakeLock = null;
-    async function requestWakeLock() {
-      if ('wakeLock' in navigator) {
-        try {
-          wakeLock = await navigator.wakeLock.request('screen');
-        } catch (err) {
-          console.log(`Could not keep screen awake: ${err.message}`);
+      };
+
+      const langCode = userLang.split('-')[0];
+      if (langs[langCode]) {
+        const shouldSwitch = confirm(`Would you like to view this site in ${langCode.toUpperCase()}?`);
+        if (shouldSwitch) {
+          const lang = langs[langCode];
+          document.querySelector("h1").textContent = lang.title;
+          document.title = lang.title;
+          const quote = lang.quotes[Math.floor(Math.random() * lang.quotes.length)];
+          document.querySelector(".footer").textContent = quote;
         }
       }
-    }
-    
-    // Handle visibility change
-    document.addEventListener('visibilitychange', async () => {
-      if (timerRunning && document.visibilityState === 'visible') {
-        requestWakeLock();
-      }
     });
-    
-    // Handle sound permission issues with a user interaction
-    document.body.addEventListener('click', function() {
-      const sound = document.getElementById('timerSound');
-      sound.muted = false;
-      sound.load();
-    }, { once: true });
+  </script>
+</head>
+
+<body>
+  <img src="logo.png" alt="Khinkali" class="khinkali" />
+  <h1>Khinkali Timer</h1>
+  <div id="countdown" class="timer">00:00</div>
+  <div class="footer">Bring focus to your study or work. Powered by Khinkali 🥟</div>
+
+  <script>
+    const quotes = [
+      "Stay dumpling-focused!",
+      "One bite at a time, one task at a time.",
+      "Steamy progress beats burnout.",
+      "Khinkali knows: Rest = Power.",
+      "Savor the silence. Focus now."
+    ];
+    document.querySelector(".footer").textContent = quotes[Math.floor(Math.random() * quotes.length)];
+
+    function parseDurationFromPath() {
+      const path = window.location.pathname.substring(1).toLowerCase();
+      const match = path.match(/(\d+)(minutes|minute|min|m)/);
+      if (!match) return 0;
+      return parseInt(match[1]) * 60;
+    }
+
+    let seconds = parseDurationFromPath();
+    const display = document.getElementById("countdown");
+
+    function updateDisplay() {
+      const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const secs = String(seconds % 60).padStart(2, '0');
+      display.textContent = \`\${mins}:\${secs}\`;
+    }
+
+    function playSound() {
+      const beep = new Audio("https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg");
+      beep.play();
+    }
+
+    function tick() {
+      if (seconds > 0) {
+        seconds--;
+        updateDisplay();
+      } else {
+        playSound();
+        clearInterval(timer);
+      }
+    }
+
+    updateDisplay();
+    const timer = setInterval(tick, 1000);
+  </script>
+
+  <audio id="alarm-sound">
+    <source src="alarm_en.mp3" type="audio/mpeg" />
+  </audio>
+  <script>
+    const langAudioMap = {
+      'ka': 'alarm_ka.mp3',
+      'es': 'alarm_es.mp3',
+      'fr': 'alarm_fr.mp3',
+      'en': 'alarm_en.mp3'
+    };
+    const userLang = (navigator.language || 'en').split('-')[0];
+    const alarmAudio = document.getElementById("alarm-sound");
+    alarmAudio.src = langAudioMap[userLang] || langAudioMap['en'];
   </script>
 </body>
+
 </html>

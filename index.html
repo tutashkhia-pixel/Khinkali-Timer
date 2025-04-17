@@ -156,12 +156,19 @@
     }
 
     function parseFromPath() {
-      const path = window.location.pathname.substring(1).toLowerCase();
-      if (path) {
-        document.getElementById('timeInput').value = path;
-        startTimer();
-      }
-    }
+  const path = window.location.pathname.substring(1).toLowerCase();
+  const hasTimeUnits = /\\d+[hms]/.test(path); // only run if path has h, m, or s
+
+  if (hasTimeUnits) {
+    document.getElementById('timeInput').value = path;
+    startTimer();
+  } else {
+    // Just reset everything to default state
+    seconds = 0;
+    updateDisplay();
+    document.getElementById('statusMessage').textContent = "";
+  }
+}
 
     updateDisplay();
     parseFromPath();

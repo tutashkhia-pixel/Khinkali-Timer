@@ -79,7 +79,10 @@
 
   <div id="countdown" class="timer">00:00</div>
   <div id="statusMessage">Ready.</div>
-  <div class="footer">Bring focus to your study or work. Powered by Khinkali 🥟</div>
+  <div class="footer">
+    Bring focus to your study or work. Powered by Khinkali 🥟<br />
+    <small style="opacity: 0.5;">Build v6 – Apr 17, 2025</small>
+  </div>
 
   <script>
     let seconds = 0;
@@ -117,8 +120,9 @@
     function startTimer() {
       clearInterval(timerInterval);
       let input = document.getElementById('timeInput').value.trim();
+
       if (/^\\d+$/.test(input)) {
-        input += 'm';
+        input += 'm'; // Interpret plain numbers as minutes
       }
 
       const totalSeconds = parseTime(input);

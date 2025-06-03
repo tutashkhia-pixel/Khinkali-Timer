@@ -75,6 +75,7 @@
     <button onclick="startTimer()">Start</button>
     <button onclick="togglePause()">Pause</button>
     <button onclick="resetTimer()">Reset</button>
+    <button id="stopAlarmBtn" onclick="stopAlarmSound()" style="display:none;">Stop Alarm</button>
   </div>
 
   <div id="countdown" class="timer">00:00</div>
@@ -101,6 +102,14 @@
     function playSound() {
       const beep = document.getElementById("alarm-sound");
       beep.play();
+      document.getElementById('stopAlarmBtn').style.display = 'inline-block';
+    }
+
+    function stopAlarmSound() {
+      const beep = document.getElementById("alarm-sound");
+      beep.pause();
+      beep.currentTime = 0;
+      document.getElementById('stopAlarmBtn').style.display = 'none';
     }
 
     function parseTime(input) {
@@ -119,6 +128,7 @@
 
     function startTimer() {
       clearInterval(timerInterval);
+      stopAlarmSound(); // Ensure alarm is stopped and button hidden
       let input = document.getElementById('timeInput').value.trim();
 
       if (/^\\d+$/.test(input)) {
@@ -159,6 +169,7 @@
       seconds = 0;
       updateDisplay();
       statusMessage.textContent = "🔁 Timer reset.";
+      stopAlarmSound(); // Ensure alarm is stopped and button hidden
     }
 
     function parseFromPath() {
@@ -179,6 +190,17 @@
 
     updateDisplay();
     parseFromPath();
+
+    document.addEventListener('keydown', function(event) {
+      if (event.code === 'Space' || event.key === ' ') {
+        if (document.activeElement.tagName !== 'INPUT') {
+          if (timerInterval === null || seconds <= 0) {
+            startTimer();
+            event.preventDefault(); // Prevent default spacebar action (scrolling)
+          }
+        }
+      }
+    });
   </script>
 
   <audio id="alarm-sound">
@@ -193,6 +215,7 @@
     };
     const userLang = (navigator.language || 'en').split('-')[0];
     const alarmAudio = document.getElementById("alarm-sound");
+    alarmAudio.volume = 1.0; // Set volume to maximum
     alarmAudio.src = langAudioMap[userLang] || langAudioMap['en'];
 
     const quotes = [

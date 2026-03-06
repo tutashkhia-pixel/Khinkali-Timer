@@ -83,6 +83,25 @@
       padding: 1.5rem 2rem;
       flex: 1;
       height: calc(100vh - 70px);
+      transition: all 0.3s ease;
+    }
+
+    .dashboard.hide-news {
+      grid-template-columns: 1fr 340px;
+    }
+
+    .dashboard.hide-kanban {
+      grid-template-columns: 320px 1fr;
+    }
+
+    .dashboard.hide-both {
+      grid-template-columns: 1fr;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .panel.hidden-panel {
+      display: none !important;
     }
 
     .panel {
@@ -107,6 +126,79 @@
       color: #a0e7e5;
       text-transform: uppercase;
       letter-spacing: 1px;
+    }
+
+    /* Settings Menu */
+    .settings-container {
+      position: relative;
+    }
+
+    .settings-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s, transform 0.2s;
+      padding: 0;
+      color: white;
+      /* emoji fallback color */
+    }
+
+    .settings-btn:hover {
+      opacity: 1;
+      transform: rotate(45deg);
+    }
+
+    .settings-modal {
+      position: absolute;
+      top: 150%;
+      right: 0;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      width: 250px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: opacity 0.2s, transform 0.2s;
+      transform-origin: top right;
+      color: var(--text-color);
+    }
+
+    .settings-modal.hidden {
+      opacity: 0;
+      transform: scale(0.95);
+      pointer-events: none;
+    }
+
+    .settings-title {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--accent-color);
+      margin-bottom: 5px;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 8px;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .setting-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--accent-color);
     }
 
     /* Left Panel: News */
@@ -196,6 +288,26 @@
       text-shadow: 0 0 30px rgba(160, 231, 229, 0.2);
     }
 
+    .timer-urgent {
+      color: #ff5555;
+      text-shadow: 0 0 20px rgba(255, 85, 85, 0.4);
+      animation: pulseRed 2s infinite;
+    }
+
+    @keyframes pulseRed {
+
+      0%,
+      100% {
+        opacity: 1;
+        text-shadow: 0 0 20px rgba(255, 85, 85, 0.4);
+      }
+
+      50% {
+        opacity: 0.8;
+        text-shadow: 0 0 35px rgba(255, 85, 85, 0.7);
+      }
+    }
+
     .khinkali {
       width: 100px;
       margin: 0 auto 1.5rem auto;
@@ -265,6 +377,66 @@
 
     button:active {
       transform: scale(0.95);
+    }
+
+    .tag-group {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .tag-btn {
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      transition: all 0.2s;
+      flex: none;
+    }
+
+    .tag-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .tag-btn.active {
+      background: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+    }
+
+    .focus-stats-container {
+      position: relative;
+      cursor: help;
+    }
+
+    .focus-tooltip {
+      visibility: hidden;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      text-align: left;
+      border-radius: 8px;
+      padding: 10px;
+      position: absolute;
+      z-index: 100;
+      bottom: 125%;
+      right: 0;
+      width: max-content;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--glass-border);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+    }
+
+    .focus-stats-container:hover .focus-tooltip {
+      visibility: visible;
+      opacity: 1;
     }
 
     #statusMessage {
@@ -406,6 +578,16 @@
     @media (max-width: 1200px) {
       .dashboard {
         grid-template-columns: 250px 1fr 280px;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .dashboard.hide-news {
+        grid-template-columns: 1fr 280px;
+      }
+
+      .dashboard.hide-kanban {
+        grid-template-columns: 250px 1fr;
       }
     }
 
@@ -414,14 +596,74 @@
         grid-template-columns: 1fr;
         height: auto;
         overflow-y: auto;
+        gap: 1.5rem;
+        padding: 1rem;
       }
 
       body {
         overflow-y: auto;
+        height: auto;
       }
 
       .panel {
-        min-height: 300px;
+        min-height: auto;
+      }
+
+      .timer {
+        font-size: 6rem;
+      }
+
+      .greeting {
+        font-size: 2.5rem;
+      }
+
+      .top-bar {
+        padding: 1rem;
+      }
+
+      .timer-panel {
+        order: 1;
+      }
+
+      .kanban-panel {
+        order: 2;
+      }
+
+      .news-panel {
+        order: 3;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .timer {
+        font-size: 4.5rem;
+        letter-spacing: -2px;
+      }
+
+      .greeting {
+        font-size: 2rem;
+      }
+
+      .top-bar h2 {
+        font-size: 1rem;
+      }
+
+      .top-bar .date-display {
+        font-size: 0.9rem;
+      }
+
+      .khinkali {
+        width: 80px;
+        margin-bottom: 1rem;
+      }
+
+      .dashboard {
+        padding: 0.5rem;
+        gap: 1rem;
+      }
+
+      .panel {
+        padding: 1rem;
       }
     }
   </style>
@@ -431,13 +673,27 @@
 
   <div class="top-bar">
     <h2>Khinkali Dash</h2>
-    <div class="date-display" id="currentDate">Loading date...</div>
+    <div style="display: flex; gap: 20px; align-items: center;">
+      <div class="date-display" id="currentDate">Loading date...</div>
+      <div class="settings-container">
+        <button id="settingsBtn" onclick="toggleSettings()" class="settings-btn">⚙️</button>
+        <div id="settingsModal" class="settings-modal hidden">
+          <div class="settings-title">Dash Settings</div>
+          <label class="setting-row">
+            <input type="checkbox" id="toggleNews" checked onchange="updateSettings()"> Show Tech News
+          </label>
+          <label class="setting-row">
+            <input type="checkbox" id="toggleKanban" checked onchange="updateSettings()"> Show Workday Planner
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="dashboard">
 
     <!-- Left Panel: Hacker News -->
-    <div class="panel">
+    <div class="panel news-panel">
       <div class="panel-title">Tech News</div>
       <div class="news-feed" id="newsFeed">
         <div style="text-align:center; padding: 20px; opacity: 0.6;">Loading top stories...</div>
@@ -448,8 +704,6 @@
     <div class="panel timer-panel">
       <div id="greetingText" class="greeting">Good day.</div>
       <img src="logo.png" alt="Khinkali" class="khinkali" />
-
-
       <div id="countdown" class="timer">00:00</div>
       <div id="statusMessage">Ready to focus.</div>
 
@@ -461,13 +715,23 @@
           <button onclick="resetTimer()">Reset</button>
         </div>
 
+        <div class="tag-group" id="tagGroup">
+          <button class="tag-btn active" onclick="selectTag(this, 'Work')">💻 Work</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Study')">📚 Study</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Coding')">🧠 Coding</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Chores')">🛠 Chores</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Rest')">🧘 Rest</button>
+        </div>
+
         <div
           style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
           <button id="ambientBtn" onclick="toggleAmbientNoise()"
             style="background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 6px 12px; font-size: 14px; flex: none;">🎧
             Rain: Off</button>
-          <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Focused today: <span id="dailyFocusVal"
-              style="font-weight: bold; color: #a0e7e5;">0m</span></div>
+          <div class="focus-stats-container" style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Focused today:
+            <span id="dailyFocusVal" style="font-weight: bold; color: #a0e7e5;">0m</span>
+            <div class="focus-tooltip" id="focusTooltip">No focus data yet.</div>
+          </div>
         </div>
 
         <button id="stopAlarmBtn" onclick="stopAlarmSound()"
@@ -476,7 +740,7 @@
     </div>
 
     <!-- Right Panel: Kanban Board -->
-    <div class="panel">
+    <div class="panel kanban-panel">
       <div class="panel-title">Workday Planner</div>
       <div class="kanban-board">
         <div class="kanban-input-group">
@@ -511,21 +775,62 @@
 
   <script>
     // --- Ambient Noise & Focus Tracking ---
-    let dailyFocusedSeconds = parseInt(localStorage.getItem('khinkaliDailyFocus')) || 0;
+
+    // Migrate old integer storage to JSON object format if necessary
+    let initialFocusStorage = localStorage.getItem('khinkaliDailyFocus');
+    let dailyFocusData;
+    try {
+      if (initialFocusStorage && !initialFocusStorage.startsWith('{')) {
+        // Migration from old simple integer
+        dailyFocusData = { total: parseInt(initialFocusStorage) || 0, tags: { "Work": parseInt(initialFocusStorage) || 0 } };
+      } else {
+        dailyFocusData = JSON.parse(initialFocusStorage) || { total: 0, tags: {} };
+      }
+    } catch (e) {
+      dailyFocusData = { total: 0, tags: {} };
+    }
+
+    let dailyFocusedSeconds = dailyFocusData.total;
     let currentInitialSeconds = 0; // Tracks the initially requested time to add it when finished
+    let currentActiveTag = 'Work'; // Default tag
+
     const ambientAudio = new Audio('sample.mp3');
     ambientAudio.loop = true;
     let isAmbientPlaying = false;
 
+    // Handle tag selection
+    function selectTag(btn, tag) {
+      document.querySelectorAll('.tag-btn').forEach(el => el.classList.remove('active'));
+      btn.classList.add('active');
+      currentActiveTag = tag;
+    }
+
     function renderDailyFocus() {
       const displayVal = document.getElementById('dailyFocusVal');
-      const h = Math.floor(dailyFocusedSeconds / 3600);
-      const m = Math.floor((dailyFocusedSeconds % 3600) / 60);
-      if (h > 0) {
-        displayVal.textContent = `${h}h ${m}m`;
+      const tooltip = document.getElementById('focusTooltip');
+
+      const totalH = Math.floor(dailyFocusData.total / 3600);
+      const totalM = Math.floor((dailyFocusData.total % 3600) / 60);
+      if (totalH > 0) {
+        displayVal.textContent = `${totalH}h ${totalM}m`;
       } else {
-        displayVal.textContent = `${m}m`;
+        displayVal.textContent = `${totalM}m`;
       }
+
+      // Build Tooltip breakdown
+      let tooltipText = "Focus Breakdown:\n";
+      let hasTags = false;
+      const emojis = { "Work": "💻", "Study": "📚", "Coding": "🧠", "Chores": "🛠", "Rest": "🧘" };
+      for (const [tag, seconds] of Object.entries(dailyFocusData.tags)) {
+        if (seconds > 0) {
+          hasTags = true;
+          const h = Math.floor(seconds / 3600);
+          const m = Math.floor((seconds % 3600) / 60);
+          const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+          tooltipText += `${emojis[tag] || '🏷'} ${tag}: ${timeStr}\n`;
+        }
+      }
+      tooltip.textContent = hasTags ? tooltipText.trim() : "No categorized focus data yet.";
     }
     renderDailyFocus();
 
@@ -546,15 +851,25 @@
     }
 
     function addFocusedTime(secondsAdded) {
-      dailyFocusedSeconds += secondsAdded;
-      localStorage.setItem('khinkaliDailyFocus', dailyFocusedSeconds);
+      dailyFocusData.total += secondsAdded;
+      if (!dailyFocusData.tags[currentActiveTag]) {
+        dailyFocusData.tags[currentActiveTag] = 0;
+      }
+      dailyFocusData.tags[currentActiveTag] += secondsAdded;
+
+      localStorage.setItem('khinkaliDailyFocus', JSON.stringify(dailyFocusData));
       renderDailyFocus();
     }
 
-    // --- Core Timer Logic ---
-    let seconds = 0;
-    let timerInterval = null;
+    // --- Core Timer Logic (Pro Web Worker Edition) ---
+    const timerWorker = new Worker('timerWorker.js');
+    let targetEndTime = 0;
+    let totalDurationSeconds = 0;
     let isPaused = false;
+    let remainingWhenPaused = 0; // Stores remaining ms when paused
+
+    // We maintain 'seconds' mathematically as remaining seconds purely for display updates 
+    let seconds = 0;
 
     const display = document.getElementById("countdown");
     const statusMessage = document.getElementById("statusMessage");
@@ -586,10 +901,12 @@
     function playResumeSound() { playBeep(550, 'triangle', 0.2); }
     function playResetSound() { playBeep(330, 'sawtooth', 0.2); setTimeout(() => playBeep(220, 'sawtooth', 0.4), 200); }
 
-    function updateDisplay() {
-      const h = Math.floor(seconds / 3600);
-      const m = Math.floor((seconds % 3600) / 60);
-      const s = seconds % 60;
+    function updateDisplay(overrideSeconds) {
+      let calcSeconds = overrideSeconds !== undefined ? overrideSeconds : seconds;
+
+      const h = Math.floor(calcSeconds / 3600);
+      const m = Math.floor((calcSeconds % 3600) / 60);
+      const s = calcSeconds % 60;
 
       const mins = String(m).padStart(2, '0');
       const secs = String(s).padStart(2, '0');
@@ -598,6 +915,13 @@
         display.textContent = `${h}:${mins}:${secs}`;
       } else {
         display.textContent = `${mins}:${secs}`;
+      }
+
+      // UX: Color States for Urgency (last 60s)
+      if (calcSeconds <= 60 && calcSeconds > 0) {
+        display.classList.add('timer-urgent');
+      } else {
+        display.classList.remove('timer-urgent');
       }
     }
 
@@ -622,21 +946,102 @@
     }
 
     function parseTime(input) {
-      let totalSeconds = 0;
+      let totalS = 0;
       const pattern = /(\d+)([hms])/gi;
       let match;
       while ((match = pattern.exec(input)) !== null) {
         const val = parseInt(match[1]);
         const unit = match[2].toLowerCase();
-        if (unit === 'h') totalSeconds += val * 3600;
-        else if (unit === 'm') totalSeconds += val * 60;
-        else if (unit === 's') totalSeconds += val;
+        if (unit === 'h') totalS += val * 3600;
+        else if (unit === 'm') totalS += val * 60;
+        else if (unit === 's') totalS += val;
       }
-      return totalSeconds;
+      return totalS;
     }
 
+    function saveTimerState() {
+      if (seconds <= 0 && !isPaused) {
+        localStorage.removeItem('khinkaliActiveTimer');
+        return;
+      }
+      const state = {
+        targetEndTime: targetEndTime,
+        totalDurationSeconds: totalDurationSeconds,
+        isPaused: isPaused,
+        remainingWhenPaused: remainingWhenPaused,
+        currentActiveTag: currentActiveTag
+      };
+      localStorage.setItem('khinkaliActiveTimer', JSON.stringify(state));
+    }
+
+    function loadTimerState() {
+      const saved = localStorage.getItem('khinkaliActiveTimer');
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          totalDurationSeconds = state.totalDurationSeconds;
+          currentActiveTag = state.currentActiveTag;
+          // visually update the pill button
+          document.querySelectorAll('.tag-btn').forEach(btn => {
+            if (btn.textContent.includes(currentActiveTag)) selectTag(btn, currentActiveTag);
+          });
+
+          if (state.isPaused) {
+            isPaused = true;
+            remainingWhenPaused = state.remainingWhenPaused;
+            seconds = Math.ceil(remainingWhenPaused / 1000);
+            updateDisplay(seconds);
+            pauseBtn.textContent = "Resume";
+            statusMessage.textContent = "⏸ Paused (Recovered)";
+          } else {
+            // It was running
+            const now = Date.now();
+            if (state.targetEndTime > now) {
+              targetEndTime = state.targetEndTime;
+              isPaused = false;
+              pauseBtn.textContent = "Pause";
+              statusMessage.textContent = "⏱ Timer resumed from background!";
+              timerWorker.postMessage({ command: 'start' });
+            } else {
+              // Time expired while afk
+              localStorage.removeItem('khinkaliActiveTimer');
+            }
+          }
+        } catch (e) {
+          console.error("Failed to load timer state", e);
+        }
+      }
+    }
+
+    function finishTimer() {
+      timerWorker.postMessage({ command: 'stop' });
+      seconds = 0;
+      updateDisplay(seconds);
+      addFocusedTime(totalDurationSeconds);
+      playSound();
+      statusMessage.textContent = "✅ Time’s up!";
+      localStorage.removeItem('khinkaliActiveTimer');
+    }
+
+    timerWorker.onmessage = function (e) {
+      if (e.data === 'tick') {
+        const now = Date.now();
+        const remainingMs = targetEndTime - now;
+        if (remainingMs <= 0) {
+          finishTimer();
+        } else {
+          // Only update mathematically if the ceiling of remaining seconds actually changed
+          const newSeconds = Math.ceil(remainingMs / 1000);
+          if (newSeconds !== seconds) {
+            seconds = newSeconds;
+            updateDisplay(seconds);
+          }
+        }
+      }
+    };
+
     function startTimer() {
-      clearInterval(timerInterval);
+      timerWorker.postMessage({ command: 'stop' });
       stopAlarmSound();
       let input = timeInput.value.trim();
 
@@ -650,82 +1055,72 @@
         input = `${parts[0]}m${parts[1]}s`;
       }
 
-      const totalSeconds = parseTime(input);
-      if (!totalSeconds) {
+      const totalS = parseTime(input);
+      if (!totalS) {
         alert("Please enter a valid time (e.g. 17m30s, 1h, or 90s).");
         return;
       }
 
       console.log("✅ Timer started with:", input);
-      seconds = totalSeconds;
-      currentInitialSeconds = totalSeconds;
-      updateDisplay();
+      totalDurationSeconds = totalS;
+      targetEndTime = Date.now() + (totalS * 1000);
+      seconds = totalS;
+
+      updateDisplay(seconds);
       isPaused = false;
       pauseBtn.textContent = "Pause";
       statusMessage.textContent = "⏱ Timer started!";
-      playStartSound();
 
-      timerInterval = setInterval(() => {
-        if (!isPaused && seconds > 0) {
-          seconds--;
-          updateDisplay();
-        } else if (seconds <= 0) {
-          addFocusedTime(currentInitialSeconds);
-          playSound();
-          clearInterval(timerInterval);
-          statusMessage.textContent = "✅ Time’s up!";
-        }
-      }, 1000);
+      playStartSound();
+      saveTimerState();
+      timerWorker.postMessage({ command: 'start' });
     }
 
     function togglePause() {
-      if (seconds <= 0 || timerInterval === null) return;
+      if (seconds <= 0) return;
       isPaused = !isPaused;
+
       if (isPaused) {
+        timerWorker.postMessage({ command: 'stop' });
+        remainingWhenPaused = targetEndTime - Date.now();
         statusMessage.textContent = "⏸ Paused";
         pauseBtn.textContent = "Resume";
         playPauseSound();
       } else {
+        // Resuming
+        targetEndTime = Date.now() + remainingWhenPaused;
         statusMessage.textContent = "▶️ Resumed";
         pauseBtn.textContent = "Pause";
         playResumeSound();
+        timerWorker.postMessage({ command: 'start' });
       }
+      saveTimerState();
     }
 
     function resetTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
-      if (seconds > 0 && currentInitialSeconds > seconds) {
+      timerWorker.postMessage({ command: 'stop' });
+      const currentRemaining = isPaused ? remainingWhenPaused : (targetEndTime - Date.now());
+      const currentRemainingSeconds = Math.ceil(currentRemaining / 1000);
+
+      if (seconds > 0 && totalDurationSeconds > currentRemainingSeconds) {
         // Appreciate partial time if reset midway
-        addFocusedTime(currentInitialSeconds - seconds);
+        addFocusedTime(totalDurationSeconds - currentRemainingSeconds);
       }
+
       seconds = 0;
-      updateDisplay();
+      targetEndTime = 0;
+      updateDisplay(seconds);
       isPaused = false;
       pauseBtn.textContent = "Pause";
       statusMessage.textContent = "🔁 Timer reset.";
       stopAlarmSound();
       playResetSound();
+      localStorage.removeItem('khinkaliActiveTimer');
     }
 
-    function parseFromPath() {
-      const path = window.location.pathname.substring(1).toLowerCase();
-      const hasTimeUnits = /\d+[hms]/.test(path);
-
-      if (hasTimeUnits) {
-        console.log("⏳ Auto-starting from URL path:", path);
-        timeInput.value = path;
-        startTimer();
-      } else {
-        console.log("🔄 No auto-start path. Resetting timer.");
-        seconds = 0;
-        updateDisplay();
-        statusMessage.textContent = "";
-      }
-    }
-
+    // Initialize Timer from LocalStorage on load
+    loadTimerState();
     updateDisplay();
-    parseFromPath();
 
     timeInput.addEventListener('keydown', function (event) {
       if (event.code === 'Enter') {
@@ -738,7 +1133,7 @@
       if (event.code === 'Space' || event.key === ' ') {
         if (document.activeElement.tagName !== 'INPUT') {
           event.preventDefault(); // Prevent default spacebar action (scrolling)
-          if (timerInterval === null || seconds <= 0) {
+          if (seconds <= 0) {
             startTimer();
           } else {
             togglePause();
@@ -766,6 +1161,66 @@
     updateGreeting();
     // Update every minute to catch hour changes
     setInterval(updateGreeting, 60000);
+
+    // --- Zen Mode Settings ---
+    const settingsModal = document.getElementById('settingsModal');
+    const toggleNewsCheckbox = document.getElementById('toggleNews');
+    const toggleKanbanCheckbox = document.getElementById('toggleKanban');
+    const newsPanel = document.querySelector('.news-panel');
+    const kanbanPanel = document.querySelector('.kanban-panel');
+    const dashboardContainer = document.querySelector('.dashboard');
+
+    let zenSettings = JSON.parse(localStorage.getItem('khinkaliZenSettings')) || {
+      showNews: true,
+      showKanban: true
+    };
+
+    function toggleSettings() {
+      settingsModal.classList.toggle('hidden');
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+      const btn = document.getElementById('settingsBtn');
+      if (!settingsModal.contains(e.target) && !btn.contains(e.target)) {
+        settingsModal.classList.add('hidden');
+      }
+    });
+
+    function updateSettings() {
+      zenSettings.showNews = toggleNewsCheckbox.checked;
+      zenSettings.showKanban = toggleKanbanCheckbox.checked;
+      localStorage.setItem('khinkaliZenSettings', JSON.stringify(zenSettings));
+      applySettings();
+    }
+
+    function applySettings() {
+      toggleNewsCheckbox.checked = zenSettings.showNews;
+      toggleKanbanCheckbox.checked = zenSettings.showKanban;
+
+      if (zenSettings.showNews) {
+        newsPanel.classList.remove('hidden-panel');
+      } else {
+        newsPanel.classList.add('hidden-panel');
+      }
+
+      if (zenSettings.showKanban) {
+        kanbanPanel.classList.remove('hidden-panel');
+      } else {
+        kanbanPanel.classList.add('hidden-panel');
+      }
+
+      dashboardContainer.classList.remove('hide-news', 'hide-kanban', 'hide-both');
+      if (!zenSettings.showNews && !zenSettings.showKanban) {
+        dashboardContainer.classList.add('hide-both');
+      } else if (!zenSettings.showNews) {
+        dashboardContainer.classList.add('hide-news');
+      } else if (!zenSettings.showKanban) {
+        dashboardContainer.classList.add('hide-kanban');
+      }
+    }
+
+    applySettings(); // Initialize on load
 
     // --- News Widget (Hacker News API) ---
     async function fetchNews() {

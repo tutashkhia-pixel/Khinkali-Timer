@@ -24,7 +24,7 @@
       --accent-color: #a65cf1;
       --accent-hover: #b87df5;
       --glass-bg: rgba(15, 15, 25, 0.6);
-      --glass-border: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
     }
 
     * {
@@ -42,7 +42,7 @@
       overflow-x: hidden;
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      min-height: 100vh;
     }
 
     @keyframes gradientBG {
@@ -279,7 +279,8 @@
     /* Center Panel: Khinkali Timer */
     .timer-panel {
       text-align: center;
-      justify-content: center;
+      justify-content: flex-start;
+      padding-top: 2rem;
       align-items: center;
       background: transparent;
       border: none;
@@ -342,7 +343,7 @@
     }
 
     .khinkali {
-      width: 180px;
+      width: 220px;
       animation: float 4s ease-in-out infinite;
       filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.7));
       opacity: 0.95;
@@ -362,27 +363,27 @@
       left: 50%;
       width: 15px;
       height: 15px;
-      background: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.4);
       border-radius: 50%;
-      filter: blur(4px);
+      filter: blur(6px);
       transform: translateX(-50%);
-      animation: steamRise 2.5s ease-out forwards;
+      animation: steamRise 3s ease-out forwards;
       pointer-events: none;
     }
 
     @keyframes steamRise {
       0% {
+        transform: translateX(-50%) translateY(0) scaleX(1);
         opacity: 0;
-        transform: translateX(-50%) translateY(0) scale(1);
       }
 
-      20% {
-        opacity: 0.8;
+      40% {
+        opacity: 0.5;
       }
 
       100% {
+        transform: translateX(-50%) translateY(-35px) scaleX(1.5);
         opacity: 0;
-        transform: translateX(calc(-50% + 15px)) translateY(-40px) scale(3);
       }
     }
 
@@ -794,12 +795,12 @@
         <img src="logo.png" alt="Khinkali" id="khinkaliIcon" class="khinkali" />
       </div>
       <div id="countdown" class="timer">00:00</div>
-      <div id="statusMessage">მზად ხართ?</div>
+      <div id="statusMessage">დავიწყოთ?</div>
 
       <div class="timer-controls">
         <input id="timeInput" placeholder="დრო (მაგ. 25m, 1h30m, 90s)" autocomplete="off" />
         <div class="button-group">
-          <button onclick="startTimer()">დაწყება</button>
+          <button onclick="startTimer()">შევუდგეთ</button>
           <button id="pauseBtn" onclick="togglePause()">პაუზა</button>
           <button onclick="resetTimer()">განულება</button>
         </div>
@@ -831,12 +832,12 @@
               style="font-size: 0.9rem; font-family: 'Noto Sans Georgian', 'Inter', sans-serif; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px;">🍽
               მოხარშული დრო:</span>
             <span id="dailyFocusVal" style="font-weight: bold; color: #a0e7e5; font-size: 1.2rem;">0m</span>
-            <div class="focus-tooltip" id="focusTooltip">მონაცემები ჯერ არ არის.</div>
+            <div class="focus-tooltip" id="focusTooltip">სუფრა ცარიელია.</div>
           </div>
         </div>
 
         <button id="stopAlarmBtn" onclick="stopAlarmSound()"
-          style="display:none; width:100%; margin-top:10px; background:#ff5555;">მაღვიძარას გათიშვა</button>
+          style="display:none; width:100%; margin-top:10px; background:#ff5555;">ხმა გათიშე</button>
 
         <!-- Deep Integration: Lo-Fi Radio -->
         <div id="lofiWrapper"
@@ -851,7 +852,7 @@
 
     <!-- Right Panel: Kanban Board -->
     <div class="panel kanban-panel">
-      <div class="panel-title">დღის გეგმა</div>
+      <div class="panel-title">დღის საქმეები</div>
       <div class="kanban-board">
         <div class="kanban-input-group">
           <input type="text" id="newTaskInput" placeholder="ახალი დავალება..." autocomplete="off" />
@@ -882,9 +883,21 @@
   </div>
   </div>
 
+  <div id="story-template"
+    style="width: 1080px; height: 1920px; display: none; position: absolute; left: -9999px; background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #0f0c29); flex-direction: column; align-items: center; justify-content: center; color: white;">
+    <h1
+      style="font-family: 'Noto Sans Georgian', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 80px; text-align: center; margin-bottom: 2rem;">
+      ჩემი დღევანდელი მოსავალი</h1>
+    <div id="story-khinkali-plate"
+      style="font-size: 180px; margin: 80px 0; filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.5));">🥟</div>
+    <h2 id="story-user-name"
+      style="font-family: 'Noto Sans Georgian', sans-serif; font-weight: 700; font-size: 60px; color: #a0e7e5;"></h2>
+  </div>
+
   <div
-    style="text-align: center; padding: 20px; padding-bottom: 40px; color: rgba(255,255,255,0.5); font-size: 0.9rem; letter-spacing: 0.5px; z-index: 10;">
-    მალე: აქციე შენი ფოკუსი სიკეთედ — <a href="#"
+    style="text-align: center; padding: 20px; padding-bottom: 40px; color: rgba(255,255,255,0.7); font-size: 0.9rem; letter-spacing: 0.5px; z-index: 10; font-variant: small-caps; transition: opacity 0.3s;"
+    onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">
+    მალე: აქციე შენი ფოკუსი სიკეთედ • <a href="https://sikete.ge" target="_blank"
       style="color: var(--accent-color); text-decoration: none; font-weight: bold;">Sikete.ge</a>
   </div>
   <div class="footer">
@@ -1248,7 +1261,7 @@
       steam.className = 'steam';
       steam.style.left = 40 + Math.random() * 20 + '%';
       container.appendChild(steam);
-      setTimeout(() => steam.remove(), 2000);
+      setTimeout(() => steam.remove(), 3000);
     }
 
     function finishTimer() {
@@ -1324,7 +1337,7 @@
       updateDisplay(seconds);
       isPaused = false;
       pauseBtn.textContent = "Pause";
-      statusMessage.textContent = "⏱ დრო დაიწყო!";
+      statusMessage.textContent = "ხინკალი იხარშება...";
 
       if (zenSettings.autoHide) {
         document.querySelector('.dashboard').classList.add('focus-mode-active');
@@ -1427,7 +1440,7 @@
       greetingElement.style.marginBottom = "1rem";
 
       if (savedName) {
-        greetingElement.innerHTML = `გამარჯობა ${savedName},<br>რას ვამზადებთ დღეს?`;
+        greetingElement.innerHTML = `გამარჯობა <span style="font-family: 'Noto Sans Georgian', 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; color: #a0e7e5;">${savedName}</span>,<br>რას ვამზადებთ დღეს?`;
       } else {
         greetingElement.innerHTML = `გამარჯობა.<br><input type="text" id="nameInput" placeholder="რა გქვია?" style="background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; max-width: 300px; width:100%; text-align:center; font-family: inherit; font-size: 2.2rem; outline:none; margin-top: 10px; padding-bottom: 5px;" autocomplete="off" onkeypress="if(event.key === 'Enter') saveName(this.value)">`;
       }

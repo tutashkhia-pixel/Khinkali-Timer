@@ -186,6 +186,18 @@
       padding-bottom: 8px;
     }
 
+    /* Auto Hide Mode */
+    .dashboard.focus-mode-active .news-panel,
+    .dashboard.focus-mode-active .kanban-panel {
+      display: none !important;
+    }
+
+    .dashboard.focus-mode-active {
+      grid-template-columns: 1fr !important;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
     .setting-row {
       display: flex;
       align-items: center;
@@ -286,6 +298,7 @@
       line-height: 1;
       letter-spacing: -4px;
       text-shadow: 0 0 30px rgba(160, 231, 229, 0.2);
+      font-variant-numeric: tabular-nums;
     }
 
     .timer-urgent {
@@ -308,12 +321,55 @@
       }
     }
 
+    /* Reactive Khinkali */
+    .khinkali-container {
+      position: relative;
+      display: inline-block;
+      margin: 0 auto 1.5rem auto;
+    }
+
     .khinkali {
       width: 100px;
-      margin: 0 auto 1.5rem auto;
       animation: float 4s ease-in-out infinite;
       filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.6));
       opacity: 0.9;
+      transition: filter 0.5s ease, opacity 0.5s ease;
+    }
+
+    .khinkali.cooked {
+      filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.8)) brightness(1.2);
+      opacity: 1;
+      animation: none;
+    }
+
+    .steam {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      filter: blur(4px);
+      transform: translateX(-50%);
+      animation: steamRise 2s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes steamRise {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+
+      20% {
+        opacity: 0.8;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(calc(-50% + 15px)) translateY(-40px) scale(3);
+      }
     }
 
     @keyframes float {
@@ -685,6 +741,13 @@
           <label class="setting-row">
             <input type="checkbox" id="toggleKanban" checked onchange="updateSettings()"> Show Workday Planner
           </label>
+          <label class="setting-row">
+            <input type="checkbox" id="toggleAutoHide" onchange="updateSettings()"> Auto-hide during focus
+          </label>
+          <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 5px 0;">
+          <button onclick="playStartSound()"
+            style="padding: 6px; font-size: 0.9em; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 4px; color: white; cursor: pointer;">🔊
+            Test Alarm Sound</button>
         </div>
       </div>
     </div>
@@ -703,7 +766,9 @@
     <!-- Center Panel: Timer -->
     <div class="panel timer-panel">
       <div id="greetingText" class="greeting">Good day.</div>
-      <img src="logo.png" alt="Khinkali" class="khinkali" />
+      <div id="khinkaliContainer" class="khinkali-container">
+        <img src="logo.png" alt="Khinkali" id="khinkaliIcon" class="khinkali" />
+      </div>
       <div id="countdown" class="timer">00:00</div>
       <div id="statusMessage">Ready to focus.</div>
 
@@ -725,9 +790,13 @@
 
         <div
           style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-          <button id="ambientBtn" onclick="toggleAmbientNoise()"
-            style="background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 6px 12px; font-size: 14px; flex: none;">🎧
-            Rain: Off</button>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="ambientBtn" onclick="toggleAmbientNoise()"
+              style="background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 6px 12px; font-size: 14px; flex: none;">🎧
+              Rain: Off</button>
+            <input type="range" id="rainVolume" min="0" max="1" step="0.05" value="1"
+              style="width: 70px; accent-color: var(--accent-color);" onchange="updateAmbientVolume()">
+          </div>
           <div class="focus-stats-container" style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Focused today:
             <span id="dailyFocusVal" style="font-weight: bold; color: #a0e7e5;">0m</span>
             <div class="focus-tooltip" id="focusTooltip">No focus data yet.</div>
@@ -850,6 +919,10 @@
       isAmbientPlaying = !isAmbientPlaying;
     }
 
+    function updateAmbientVolume() {
+      ambientAudio.volume = document.getElementById('rainVolume').value;
+    }
+
     function addFocusedTime(secondsAdded) {
       dailyFocusData.total += secondsAdded;
       if (!dailyFocusData.tags[currentActiveTag]) {
@@ -912,9 +985,17 @@
       const secs = String(s).padStart(2, '0');
 
       if (h > 0) {
-        display.textContent = `${h}:${mins}:${secs}`;
+        const displayStr = `${h}:${mins}:${secs}`;
+        display.textContent = displayStr;
+        document.title = `(${displayStr}) Khinkali Dash`;
       } else {
-        display.textContent = `${mins}:${secs}`;
+        const displayStr = `${mins}:${secs}`;
+        display.textContent = displayStr;
+        if (calcSeconds > 0) {
+          document.title = `(${displayStr}) Khinkali Dash`;
+        } else {
+          document.title = `Khinkali Dash`;
+        }
       }
 
       // UX: Color States for Urgency (last 60s)
@@ -1013,8 +1094,21 @@
       }
     }
 
+    let steamInterval = null;
+    function spawnSteam() {
+      const container = document.getElementById('khinkaliContainer');
+      const steam = document.createElement('div');
+      steam.className = 'steam';
+      steam.style.left = 40 + Math.random() * 20 + '%';
+      container.appendChild(steam);
+      setTimeout(() => steam.remove(), 2000);
+    }
+
     function finishTimer() {
       timerWorker.postMessage({ command: 'stop' });
+      clearInterval(steamInterval);
+      document.getElementById('khinkaliIcon').classList.add('cooked');
+      document.querySelector('.dashboard').classList.remove('focus-mode-active');
       seconds = 0;
       updateDisplay(seconds);
       addFocusedTime(totalDurationSeconds);
@@ -1071,6 +1165,12 @@
       pauseBtn.textContent = "Pause";
       statusMessage.textContent = "⏱ Timer started!";
 
+      if (zenSettings.autoHide) {
+        document.querySelector('.dashboard').classList.add('focus-mode-active');
+      }
+
+      document.getElementById('khinkaliIcon').classList.remove('cooked');
+      steamInterval = setInterval(spawnSteam, 600);
       playStartSound();
       saveTimerState();
       timerWorker.postMessage({ command: 'start' });
@@ -1082,12 +1182,16 @@
 
       if (isPaused) {
         timerWorker.postMessage({ command: 'stop' });
+        clearInterval(steamInterval);
+        document.querySelector('.dashboard').classList.remove('focus-mode-active');
         remainingWhenPaused = targetEndTime - Date.now();
         statusMessage.textContent = "⏸ Paused";
         pauseBtn.textContent = "Resume";
         playPauseSound();
       } else {
         // Resuming
+        if (zenSettings.autoHide) document.querySelector('.dashboard').classList.add('focus-mode-active');
+        steamInterval = setInterval(spawnSteam, 600);
         targetEndTime = Date.now() + remainingWhenPaused;
         statusMessage.textContent = "▶️ Resumed";
         pauseBtn.textContent = "Pause";
@@ -1099,6 +1203,9 @@
 
     function resetTimer() {
       timerWorker.postMessage({ command: 'stop' });
+      clearInterval(steamInterval);
+      document.getElementById('khinkaliIcon').classList.remove('cooked');
+      document.querySelector('.dashboard').classList.remove('focus-mode-active');
       const currentRemaining = isPaused ? remainingWhenPaused : (targetEndTime - Date.now());
       const currentRemainingSeconds = Math.ceil(currentRemaining / 1000);
 
@@ -1172,7 +1279,8 @@
 
     let zenSettings = JSON.parse(localStorage.getItem('khinkaliZenSettings')) || {
       showNews: true,
-      showKanban: true
+      showKanban: true,
+      autoHide: false
     };
 
     function toggleSettings() {
@@ -1190,6 +1298,7 @@
     function updateSettings() {
       zenSettings.showNews = toggleNewsCheckbox.checked;
       zenSettings.showKanban = toggleKanbanCheckbox.checked;
+      zenSettings.autoHide = document.getElementById('toggleAutoHide').checked;
       localStorage.setItem('khinkaliZenSettings', JSON.stringify(zenSettings));
       applySettings();
     }
@@ -1197,6 +1306,7 @@
     function applySettings() {
       toggleNewsCheckbox.checked = zenSettings.showNews;
       toggleKanbanCheckbox.checked = zenSettings.showKanban;
+      document.getElementById('toggleAutoHide').checked = zenSettings.autoHide;
 
       if (zenSettings.showNews) {
         newsPanel.classList.remove('hidden-panel');

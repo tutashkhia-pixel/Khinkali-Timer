@@ -18,13 +18,13 @@
     rel="stylesheet">
   <style>
     :root {
-      --bg-color: #0f0c29;
-      --card-bg: rgba(20, 20, 30, 0.4);
+      --bg-color: #0d0b1a;
+      --card-bg: rgba(15, 15, 25, 0.4);
       --text-color: #f5f5f5;
       --accent-color: #a65cf1;
       --accent-hover: #b87df5;
-      --glass-bg: rgba(20, 20, 30, 0.4);
-      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-bg: rgba(15, 15, 25, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.05);
     }
 
     * {
@@ -70,9 +70,10 @@
     }
 
     .top-bar h2 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.5);
+      font-size: 1.4rem;
+      font-family: 'Noto Sans Georgian', 'Inter', sans-serif;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.8);
       letter-spacing: 2px;
       text-transform: uppercase;
     }
@@ -82,11 +83,10 @@
       color: rgba(255, 255, 255, 0.7);
     }
 
-    /* Dashboard Layout */
     .dashboard {
       display: grid;
-      grid-template-columns: 320px 1fr 340px;
-      gap: 2rem;
+      grid-template-columns: 280px 1fr 300px;
+      gap: 3rem;
       padding: 1.5rem 2rem;
       flex: 1;
       height: calc(100vh - 70px);
@@ -114,15 +114,23 @@
     .panel {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      border-radius: 24px;
+      padding: 2rem;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       transition: transform 0.3s ease;
+    }
+
+    .panel-title,
+    .settings-title,
+    .kanban-column-header {
+      font-family: 'Noto Sans Georgian', 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .panel-title {
@@ -131,8 +139,6 @@
       border-bottom: 1px solid var(--glass-border);
       padding-bottom: 0.5rem;
       color: #a0e7e5;
-      text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     /* Settings Menu */
@@ -328,38 +334,39 @@
       }
     }
 
-    /* Reactive Khinkali */
+    /* Reactive Khinkali Hero */
     .khinkali-container {
       position: relative;
       display: inline-block;
-      margin: 1rem auto 1.5rem auto;
+      margin: 1.5rem auto 2rem auto;
     }
 
     .khinkali {
-      width: 100px;
+      width: 180px;
       animation: float 4s ease-in-out infinite;
-      filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.6));
-      opacity: 0.9;
-      transition: filter 0.5s ease, opacity 0.5s ease;
+      filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.7));
+      opacity: 0.95;
+      transition: filter 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
     }
 
     .khinkali.cooked {
-      filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.8)) brightness(1.2);
+      filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.9)) brightness(1.2);
       opacity: 1;
+      transform: scale(1.1);
       animation: none;
     }
 
     .steam {
       position: absolute;
-      top: -20px;
+      top: -30px;
       left: 50%;
-      width: 10px;
-      height: 10px;
-      background: rgba(255, 255, 255, 0.4);
+      width: 15px;
+      height: 15px;
+      background: rgba(255, 255, 255, 0.5);
       border-radius: 50%;
       filter: blur(4px);
       transform: translateX(-50%);
-      animation: steamRise 2s ease-out forwards;
+      animation: steamRise 2.5s ease-out forwards;
       pointer-events: none;
     }
 
@@ -769,11 +776,17 @@
     </div>
   </div>
 
+  <div
+    style="text-align: center; padding: 20px; padding-bottom: 40px; color: rgba(255,255,255,0.5); font-size: 0.9rem; letter-spacing: 0.5px; z-index: 10;">
+    მალე: აქციე შენი ფოკუსი სიკეთედ — <a href="#"
+      style="color: var(--accent-color); text-decoration: none; font-weight: bold;">Sikete.ge</a>
+  </div>
+
   <div class="dashboard">
 
     <!-- Left Panel: Hacker News -->
     <div class="panel news-panel">
-      <div class="panel-title">Tech News</div>
+      <div class="panel-title">ტექ-სიახლეები</div>
       <div class="news-feed" id="newsFeed">
         <div style="text-align:center; padding: 20px; opacity: 0.6;">Loading top stories...</div>
       </div>
@@ -818,9 +831,12 @@
               style="background: transparent; border: 1px solid #FFD700; color: #FFD700; padding: 6px 12px; font-size: 14px; flex: none; margin-left: 10px;">📻
               ლო-ფაი რადიო</button>
           </div>
-          <div class="focus-stats-container" style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">დღევანდელი
-            მოსავალი:
-            <span id="dailyFocusVal" style="font-weight: bold; color: #a0e7e5;">0m</span>
+          <div class="focus-stats-container"
+            style="margin-top:20px; padding: 15px 20px; background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid var(--glass-border); border-radius: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%;">
+            <span
+              style="font-size: 0.9rem; font-family: 'Noto Sans Georgian', 'Inter', sans-serif; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px;">🍽
+              მოხარშული დრო:</span>
+            <span id="dailyFocusVal" style="font-weight: bold; color: #a0e7e5; font-size: 1.2rem;">0m</span>
             <div class="focus-tooltip" id="focusTooltip">მონაცემები ჯერ არ არის.</div>
           </div>
         </div>
@@ -869,9 +885,14 @@
         </div>
       </div>
     </div>
-
+  </div>
   </div>
 
+  <div
+    style="text-align: center; padding: 20px; padding-bottom: 40px; color: rgba(255,255,255,0.5); font-size: 0.9rem; letter-spacing: 0.5px; z-index: 10;">
+    მალე: აქციე შენი ფოკუსი სიკეთედ — <a href="#"
+      style="color: var(--accent-color); text-decoration: none; font-weight: bold;">Sikete.ge</a>
+  </div>
   <div class="footer">
     <small style="opacity: 0.5;">Khinkali Dash v1000</small>
   </div>
@@ -1093,7 +1114,15 @@
       oscillator.stop(audioCtx.currentTime + duration);
     }
 
-    function playStartSound() { playBeep(440, 'sine', 0.2); setTimeout(() => playBeep(660, 'sine', 0.3), 200); }
+    function playStartSound() {
+      const beep = document.getElementById("alarm-sound");
+      beep.currentTime = 0;
+      beep.play().catch(e => console.error(e));
+      setTimeout(() => {
+        beep.pause();
+        beep.currentTime = 0;
+      }, 3000);
+    }
     function playPauseSound() { playBeep(330, 'triangle', 0.2); }
     function playResumeSound() { playBeep(550, 'triangle', 0.2); }
     function playResetSound() { playBeep(330, 'sawtooth', 0.2); setTimeout(() => playBeep(220, 'sawtooth', 0.4), 200); }
@@ -1667,16 +1696,9 @@
     <source src="alarm_en.mp3" type="audio/mpeg" />
   </audio>
   <script>
-    const langAudioMap = {
-      'ka': 'alarm_ka.mp3',
-      'es': 'alarm_es.mp3',
-      'fr': 'alarm_fr.mp3',
-      'en': 'alarm_en.mp3'
-    };
-    const userLang = (navigator.language || 'en').split('-')[0];
     const alarmAudio = document.getElementById("alarm-sound");
     alarmAudio.volume = 1.0;
-    alarmAudio.src = langAudioMap[userLang] || langAudioMap['en'];
+    alarmAudio.src = 'alarm_ka.mp3';
 
     // --- PWA Service Worker Registration ---
     if ('serviceWorker' in navigator) {

@@ -776,12 +776,6 @@
     </div>
   </div>
 
-  <div
-    style="text-align: center; padding: 20px; padding-bottom: 40px; color: rgba(255,255,255,0.5); font-size: 0.9rem; letter-spacing: 0.5px; z-index: 10;">
-    მალე: აქციე შენი ფოკუსი სიკეთედ — <a href="#"
-      style="color: var(--accent-color); text-decoration: none; font-weight: bold;">Sikete.ge</a>
-  </div>
-
   <div class="dashboard">
 
     <!-- Left Panel: Hacker News -->
@@ -1425,16 +1419,28 @@
 
     // --- Dynamic Greeting ---
     function updateGreeting() {
-      const hour = new Date().getHours();
-      let greeting = "საღამო მშვიდობისა";
-      if (hour < 5) greeting = "ღამე მშვიდობისა";
-      else if (hour < 12) greeting = "დილა მშვიდობისა";
-      else if (hour < 18) greeting = "შუადღე მშვიდობისა";
-      document.getElementById('greetingText').textContent = greeting + ", ფოკუსის დროა.";
+      const savedName = localStorage.getItem('khinkaliUserName');
+      const greetingElement = document.getElementById('greetingText');
+
+      greetingElement.style.fontSize = "2.5rem";
+      greetingElement.style.lineHeight = "1.2";
+      greetingElement.style.marginBottom = "1rem";
+
+      if (savedName) {
+        greetingElement.innerHTML = `გამარჯობა ${savedName},<br>რას ვამზადებთ დღეს?`;
+      } else {
+        greetingElement.innerHTML = `გამარჯობა.<br><input type="text" id="nameInput" placeholder="რა გქვია?" style="background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; max-width: 300px; width:100%; text-align:center; font-family: inherit; font-size: 2.2rem; outline:none; margin-top: 10px; padding-bottom: 5px;" autocomplete="off" onkeypress="if(event.key === 'Enter') saveName(this.value)">`;
+      }
     }
+
+    function saveName(name) {
+      if (name.trim()) {
+        localStorage.setItem('khinkaliUserName', name.trim());
+        updateGreeting();
+      }
+    }
+
     updateGreeting();
-    // Update every minute to catch hour changes
-    setInterval(updateGreeting, 60000);
 
     // --- Zen Mode Settings ---
     const settingsModal = document.getElementById('settingsModal');

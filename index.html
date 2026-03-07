@@ -325,7 +325,7 @@
     .khinkali-container {
       position: relative;
       display: inline-block;
-      margin: 0 auto 1.5rem auto;
+      margin: 0 auto -20px auto;
     }
 
     .khinkali {
@@ -334,6 +334,7 @@
       filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.6));
       opacity: 0.9;
       transition: filter 0.5s ease, opacity 0.5s ease;
+      clip-path: inset(0 0 30% 0);
     }
 
     .khinkali.cooked {

@@ -736,9 +736,12 @@
     <h2>Khinkali Dash</h2>
     <div style="display: flex; gap: 20px; align-items: center;">
       <!-- Gamification Stats -->
-      <div id="statsContainer" style="display: flex; gap: 15px; font-weight: 500; font-size: 1.1rem; opacity: 0.9;">
+      <div id="statsContainer"
+        style="display: flex; gap: 15px; font-weight: 500; font-size: 1.1rem; opacity: 0.9; align-items: center;">
         <div id="khinkaliCount"
-          style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.3); transition: transform 0.3s;">🥟 0 Cooked
+          style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.3); transition: transform 0.3s; display: flex; align-items: center; gap: 5px;">
+          <img src="logo.png" style="width: 20px; height: 20px; filter: drop-shadow(0 0 5px rgba(255,215,0,0.5));"
+            alt="icon" /> <span id="khinkaliCountText">0 Cooked</span>
         </div>
         <div id="fireStreak" style="color: #ff7b00; text-shadow: 0 0 10px rgba(255,123,0,0.3); display: none;">🔥 0 Day
           Streak</div>
@@ -776,10 +779,11 @@
       </div>
     </div>
 
-    <!-- Center Panel: Timer -->
-    <div class="panel timer-panel">
+    <!-- Center Panel: Timer (Dropzone for Tasks) -->
+    <div class="panel timer-panel" id="timerPanelDropzone" ondragover="allowDropToTimer(event)"
+      ondragleave="dragLeaveTimer(event)" ondrop="dropToTimer(event)" style="transition: border 0.2s, background 0.2s;">
       <div id="greetingText" class="greeting">Good day.</div>
-      <div id="khinkaliContainer" class="khinkali-container">
+      <div id="khinkaliContainer" class="khinkali-container" style="pointer-events: none;">
         <img src="logo.png" alt="Khinkali" id="khinkaliIcon" class="khinkali" />
       </div>
       <div id="countdown" class="timer">00:00</div>
@@ -827,6 +831,9 @@
       <div class="kanban-board">
         <div class="kanban-input-group">
           <input type="text" id="newTaskInput" placeholder="Add a new task..." autocomplete="off" />
+          <input type="number" id="newTaskEst" placeholder="Est. 🥟" min="1" max="10"
+            style="flex: none; width: 70px; text-align: center; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.2); color: white;"
+            title="Estimated Khinkalis (Pomodoros)">
           <button onclick="addTask()">Add</button>
         </div>
 
@@ -1199,8 +1206,21 @@
       updateDisplay(seconds);
       addFocusedTime(totalDurationSeconds);
       checkAndCookKhinkali(); // Gamification Hook
+
+      // Smart Kanban Hook
+      if (activeDragedTaskId) {
+        const taskIndex = tasks.findIndex(t => t.id === activeDragedTaskId);
+        if (taskIndex !== -1) {
+          tasks[taskIndex].actual = (tasks[taskIndex].actual || 0) + 1;
+          saveTasks(); // Re-renders the board with updated stats
+        }
+        activeDragedTaskId = null; // Clear it for the next timer
+        statusMessage.textContent = "✅ Task session complete!";
+      } else {
+        statusMessage.textContent = "✅ Time’s up!";
+      }
+
       playSound();
-      statusMessage.textContent = "✅ Time’s up!";
       localStorage.removeItem('khinkaliActiveTimer');
     }
 
@@ -1475,7 +1495,10 @@
         card.dataset.id = task.id;
         card.innerHTML = `
           <span>${task.text}</span>
-          <span class="delete-task" onclick="deleteTask('${task.id}')">&times;</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${task.estimated ? `<span style="font-size:0.8rem; opacity:0.7; color:#FFD700;">(${task.actual || 0}/${task.estimated} 🥟)</span>` : ''}
+            <span class="delete-task" onclick="deleteTask('${task.id}')">&times;</span>
+          </div>
         `;
 
         card.addEventListener('dragstart', dragStart);
@@ -1492,15 +1515,19 @@
     function addTask() {
       const input = document.getElementById('newTaskInput');
       const text = input.value.trim();
+      const estInput = document.getElementById('newTaskEst').value;
       if (!text) return;
 
       tasks.push({
         id: 'task_' + Date.now(),
         text: text,
-        status: 'todo'
+        status: 'todo',
+        estimated: parseInt(estInput) || null,
+        actual: 0
       });
 
       input.value = '';
+      document.getElementById('newTaskEst').value = '';
       saveTasks();
     }
 
@@ -1559,6 +1586,46 @@
         }
       });
     });
+
+    // --- Drag to Timer Logic ---
+    let activeDragedTaskId = null; // Stores the task running on the timer
+
+    function allowDropToTimer(e) {
+      e.preventDefault();
+      document.getElementById('timerPanelDropzone').style.background = 'rgba(160, 231, 229, 0.1)';
+      document.getElementById('timerPanelDropzone').style.border = '1px solid #a0e7e5';
+    }
+
+    function dragLeaveTimer(e) {
+      document.getElementById('timerPanelDropzone').style.background = 'var(--glass-bg)';
+      document.getElementById('timerPanelDropzone').style.border = '1px solid var(--glass-border)';
+    }
+
+    function dropToTimer(e) {
+      e.preventDefault();
+      dragLeaveTimer(); // Reset styles
+
+      if (draggedCard) {
+        const taskId = draggedCard.dataset.id;
+        const taskObj = tasks.find(t => t.id === taskId);
+
+        if (taskObj) {
+          // Move card to progress if it isn't already
+          if (taskObj.status !== 'progress') {
+            taskObj.status = 'progress';
+            saveTasks();
+          }
+
+          // Force timer settings
+          document.getElementById('timeInput').value = '25m';
+          statusMessage.textContent = `Focusing on: ${taskObj.text}`;
+          activeDragedTaskId = taskId; // Lock this task to the timer
+
+          // Start the timer
+          startTimer();
+        }
+      }
+    }
 
     // Initialize Kanban
     renderTasks();

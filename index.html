@@ -9,11 +9,13 @@
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Khinkali">
+  <meta name="apple-mobile-web-app-title" content="ხინკალი">
   <link rel="apple-touch-icon" href="favicon.png">
   <meta property="og:image" content="logo.png">
   <meta name="twitter:card" content="summary_large_image">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg-color: #0f0c29;
@@ -32,7 +34,7 @@
     }
 
     body {
-      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Noto Sans Georgian', 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #0f0c29);
       background-size: 400% 400%;
       animation: gradientBG 20s ease infinite;
@@ -377,16 +379,14 @@
       }
     }
 
-    @keyframes float {
-
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-15px);
-      }
+    .timer {
+      font-family: 'Inter', monospace;
+      font-size: 6rem;
+      font-weight: 200;
+      letter-spacing: -2px;
+      margin-bottom: 5px;
+      font-variant-numeric: tabular-nums;
+      transition: color 0.3s;
     }
 
     .timer-controls {
@@ -782,27 +782,27 @@
     <!-- Center Panel: Timer (Dropzone for Tasks) -->
     <div class="panel timer-panel" id="timerPanelDropzone" ondragover="allowDropToTimer(event)"
       ondragleave="dragLeaveTimer(event)" ondrop="dropToTimer(event)" style="transition: border 0.2s, background 0.2s;">
-      <div id="greetingText" class="greeting">Good day.</div>
+      <div id="greetingText" class="greeting">გამარჯობა.</div>
       <div id="khinkaliContainer" class="khinkali-container" style="pointer-events: none;">
         <img src="logo.png" alt="Khinkali" id="khinkaliIcon" class="khinkali" />
       </div>
       <div id="countdown" class="timer">00:00</div>
-      <div id="statusMessage">Ready to focus.</div>
+      <div id="statusMessage">მზად ხართ?</div>
 
       <div class="timer-controls">
-        <input id="timeInput" placeholder="Time (e.g. 25m, 1h30m, 90s)" autocomplete="off" />
+        <input id="timeInput" placeholder="დრო (მაგ. 25m, 1h30m, 90s)" autocomplete="off" />
         <div class="button-group">
-          <button onclick="startTimer()">Start</button>
-          <button id="pauseBtn" onclick="togglePause()">Pause</button>
-          <button onclick="resetTimer()">Reset</button>
+          <button onclick="startTimer()">დაწყება</button>
+          <button id="pauseBtn" onclick="togglePause()">პაუზა</button>
+          <button onclick="resetTimer()">განულება</button>
         </div>
 
         <div class="tag-group" id="tagGroup">
-          <button class="tag-btn active" onclick="selectTag(this, 'Work')">💻 Work</button>
-          <button class="tag-btn" onclick="selectTag(this, 'Study')">📚 Study</button>
-          <button class="tag-btn" onclick="selectTag(this, 'Coding')">🧠 Coding</button>
-          <button class="tag-btn" onclick="selectTag(this, 'Chores')">🛠 Chores</button>
-          <button class="tag-btn" onclick="selectTag(this, 'Rest')">🧘 Rest</button>
+          <button class="tag-btn active" onclick="selectTag(this, 'Work')">💻 სამუშაო</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Study')">📚 სწავლა</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Coding')">🧠 პროგრამირება</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Chores')">🛠 საოჯახო</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Rest')">🧘 დასვენება</button>
         </div>
 
         <div
@@ -810,22 +810,23 @@
           <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
             <button id="ambientBtn" onclick="toggleAmbientNoise()"
               style="background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 6px 12px; font-size: 14px; flex: none;">🎧
-              Rain: Off</button>
+              წვიმა: გამორთულია</button>
             <input type="range" id="rainVolume" min="0" max="1" step="0.05" value="1"
               style="width: 70px; accent-color: var(--accent-color);" onchange="updateAmbientVolume()">
 
             <button id="lofiBtn" onclick="toggleLofi()"
               style="background: transparent; border: 1px solid #FFD700; color: #FFD700; padding: 6px 12px; font-size: 14px; flex: none; margin-left: 10px;">📻
-              Lo-Fi Radio</button>
+              ლო-ფაი რადიო</button>
           </div>
-          <div class="focus-stats-container" style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Focused today:
+          <div class="focus-stats-container" style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">დღევანდელი
+            მოსავალი:
             <span id="dailyFocusVal" style="font-weight: bold; color: #a0e7e5;">0m</span>
-            <div class="focus-tooltip" id="focusTooltip">No focus data yet.</div>
+            <div class="focus-tooltip" id="focusTooltip">მონაცემები ჯერ არ არის.</div>
           </div>
         </div>
 
         <button id="stopAlarmBtn" onclick="stopAlarmSound()"
-          style="display:none; width:100%; margin-top:10px; background:#ff5555;">Stop Alarm</button>
+          style="display:none; width:100%; margin-top:10px; background:#ff5555;">მაღვიძარას გათიშვა</button>
 
         <!-- Deep Integration: Lo-Fi Radio -->
         <div id="lofiWrapper"
@@ -840,29 +841,29 @@
 
     <!-- Right Panel: Kanban Board -->
     <div class="panel kanban-panel">
-      <div class="panel-title">Workday Planner</div>
+      <div class="panel-title">დღის გეგმა</div>
       <div class="kanban-board">
         <div class="kanban-input-group">
-          <input type="text" id="newTaskInput" placeholder="Add a new task..." autocomplete="off" />
+          <input type="text" id="newTaskInput" placeholder="ახალი დავალება..." autocomplete="off" />
           <input type="number" id="newTaskEst" placeholder="Est. 🥟" min="1" max="10"
             style="flex: none; width: 70px; text-align: center; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.2); color: white;"
             title="Estimated Khinkalis (Pomodoros)">
-          <button onclick="addTask()">Add</button>
+          <button onclick="addTask()">დამატება</button>
         </div>
 
         <div class="kanban-columns">
           <div class="kanban-column" id="col-todo">
-            <div class="kanban-column-header">To Do <span id="count-todo">0</span></div>
+            <div class="kanban-column-header">გასაკეთებელი <span id="count-todo">0</span></div>
             <div class="kanban-cards" id="cards-todo" data-status="todo"></div>
           </div>
 
           <div class="kanban-column" id="col-progress">
-            <div class="kanban-column-header">In Progress <span id="count-progress">0</span></div>
+            <div class="kanban-column-header">მიმდინარე <span id="count-progress">0</span></div>
             <div class="kanban-cards" id="cards-progress" data-status="progress"></div>
           </div>
 
           <div class="kanban-column" id="col-done">
-            <div class="kanban-column-header" style="color:#a0e7e5;">Done <span id="count-done">0</span></div>
+            <div class="kanban-column-header" style="color:#a0e7e5;">დასრულებული <span id="count-done">0</span></div>
             <div class="kanban-cards" id="cards-done" data-status="done"></div>
           </div>
         </div>
@@ -1110,14 +1111,14 @@
       if (h > 0) {
         const displayStr = `${h}:${mins}:${secs}`;
         display.textContent = displayStr;
-        document.title = `(${displayStr}) Khinkali Dash`;
+        document.title = `(${displayStr}) ხინკლის დაფა`;
       } else {
         const displayStr = `${mins}:${secs}`;
         display.textContent = displayStr;
         if (calcSeconds > 0) {
-          document.title = `(${displayStr}) Khinkali Dash`;
+          document.title = `(${displayStr}) ხინკლის დაფა`;
         } else {
-          document.title = `Khinkali Dash`;
+          document.title = `ხინკლის დაფა`;
         }
       }
 
@@ -1196,7 +1197,7 @@
             seconds = Math.ceil(remainingWhenPaused / 1000);
             updateDisplay(seconds);
             pauseBtn.textContent = "Resume";
-            statusMessage.textContent = "⏸ Paused (Recovered)";
+            statusMessage.textContent = "⏸ პაუზა (აღდგენილი)";
           } else {
             // It was running
             const now = Date.now();
@@ -1204,7 +1205,7 @@
               targetEndTime = state.targetEndTime;
               isPaused = false;
               pauseBtn.textContent = "Pause";
-              statusMessage.textContent = "⏱ Timer resumed from background!";
+              statusMessage.textContent = "⏱ დრო აღდგა ფონიდან!";
               timerWorker.postMessage({ command: 'start' });
             } else {
               // Time expired while afk
@@ -1245,9 +1246,9 @@
           saveTasks(); // Re-renders the board with updated stats
         }
         activeDragedTaskId = null; // Clear it for the next timer
-        statusMessage.textContent = "✅ Task session complete!";
+        statusMessage.textContent = "✅ გაიშალა სუფრა!";
       } else {
-        statusMessage.textContent = "✅ Time’s up!";
+        statusMessage.textContent = "✅ დრო გავიდა!";
       }
 
       playSound();
@@ -1300,7 +1301,7 @@
       updateDisplay(seconds);
       isPaused = false;
       pauseBtn.textContent = "Pause";
-      statusMessage.textContent = "⏱ Timer started!";
+      statusMessage.textContent = "⏱ დრო დაიწყო!";
 
       if (zenSettings.autoHide) {
         document.querySelector('.dashboard').classList.add('focus-mode-active');
@@ -1322,7 +1323,7 @@
         clearInterval(steamInterval);
         document.querySelector('.dashboard').classList.remove('focus-mode-active');
         remainingWhenPaused = targetEndTime - Date.now();
-        statusMessage.textContent = "⏸ Paused";
+        statusMessage.textContent = "⏸ პაუზა";
         pauseBtn.textContent = "Resume";
         playPauseSound();
       } else {
@@ -1330,7 +1331,7 @@
         if (zenSettings.autoHide) document.querySelector('.dashboard').classList.add('focus-mode-active');
         steamInterval = setInterval(spawnSteam, 600);
         targetEndTime = Date.now() + remainingWhenPaused;
-        statusMessage.textContent = "▶️ Resumed";
+        statusMessage.textContent = "▶️ გაგრძელება";
         pauseBtn.textContent = "Pause";
         playResumeSound();
         timerWorker.postMessage({ command: 'start' });
@@ -1355,8 +1356,8 @@
       targetEndTime = 0;
       updateDisplay(seconds);
       isPaused = false;
-      pauseBtn.textContent = "Pause";
-      statusMessage.textContent = "🔁 Timer reset.";
+      pauseBtn.textContent = "პაუზა";
+      statusMessage.textContent = "🔁 დრო განულდა.";
       stopAlarmSound();
       playResetSound();
       localStorage.removeItem('khinkaliActiveTimer');
@@ -1396,11 +1397,11 @@
     // --- Dynamic Greeting ---
     function updateGreeting() {
       const hour = new Date().getHours();
-      let greeting = "Good evening";
-      if (hour < 5) greeting = "Good night";
-      else if (hour < 12) greeting = "Good morning";
-      else if (hour < 18) greeting = "Good afternoon";
-      document.getElementById('greetingText').textContent = greeting + ", focus time.";
+      let greeting = "საღამო მშვიდობისა";
+      if (hour < 5) greeting = "ღამე მშვიდობისა";
+      else if (hour < 12) greeting = "დილა მშვიდობისა";
+      else if (hour < 18) greeting = "შუადღე მშვიდობისა";
+      document.getElementById('greetingText').textContent = greeting + ", ფოკუსის დროა.";
     }
     updateGreeting();
     // Update every minute to catch hour changes
@@ -1648,7 +1649,7 @@
 
           // Force timer settings
           document.getElementById('timeInput').value = '25m';
-          statusMessage.textContent = `Focusing on: ${taskObj.text}`;
+          statusMessage.textContent = `ხინკალი იხარშება: ${taskObj.text}`;
           activeDragedTaskId = taskId; // Lock this task to the timer
 
           // Start the timer

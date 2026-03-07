@@ -735,6 +735,14 @@
   <div class="top-bar">
     <h2>Khinkali Dash</h2>
     <div style="display: flex; gap: 20px; align-items: center;">
+      <!-- Gamification Stats -->
+      <div id="statsContainer" style="display: flex; gap: 15px; font-weight: 500; font-size: 1.1rem; opacity: 0.9;">
+        <div id="khinkaliCount"
+          style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.3); transition: transform 0.3s;">🥟 0 Cooked
+        </div>
+        <div id="fireStreak" style="color: #ff7b00; text-shadow: 0 0 10px rgba(255,123,0,0.3); display: none;">🔥 0 Day
+          Streak</div>
+      </div>
       <div class="date-display" id="currentDate">Loading date...</div>
       <div class="settings-container">
         <button id="settingsBtn" onclick="toggleSettings()" class="settings-btn">⚙️</button>
@@ -848,6 +856,79 @@
   </div>
 
   <script>
+    // --- Gamification & Stats Engine ---
+    let userStats = JSON.parse(localStorage.getItem('khinkaliUserStats')) || {
+      totalKhinkalisCooked: 0,
+      todayKhinkalis: 0,
+      lastFocusDate: null,
+      currentStreak: 0
+    };
+
+    function getLocalDateString() {
+      // Returns YYYY-MM-DD based on local timezone, not UTC
+      const d = new Date();
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      return d.toISOString().split('T')[0];
+    }
+
+    function renderStatsUI(animate = false) {
+      const todayDate = getLocalDateString();
+
+      // Reset daily count if it's a new day
+      if (userStats.lastFocusDate && userStats.lastFocusDate !== todayDate) {
+        userStats.todayKhinkalis = 0;
+      }
+
+      const countEl = document.getElementById('khinkaliCount');
+      const streakEl = document.getElementById('fireStreak');
+
+      countEl.textContent = `🥟 ${userStats.totalKhinkalisCooked} Cooked`;
+
+      if (userStats.currentStreak > 0) {
+        streakEl.style.display = 'block';
+        streakEl.textContent = `🔥 ${userStats.currentStreak} Day Streak`;
+      } else {
+        streakEl.style.display = 'none';
+      }
+
+      if (animate) {
+        countEl.style.transform = 'scale(1.5)';
+        setTimeout(() => countEl.style.transform = 'scale(1)', 300);
+      }
+    }
+
+    function checkAndCookKhinkali() {
+      const todayDate = getLocalDateString();
+      userStats.totalKhinkalisCooked += 1;
+      userStats.todayKhinkalis += 1;
+
+      if (!userStats.lastFocusDate) {
+        // First time ever focusing
+        userStats.currentStreak = 1;
+        userStats.lastFocusDate = todayDate;
+      } else if (userStats.lastFocusDate !== todayDate) {
+        // Did they focus exactly yesterday?
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        yesterday.setMinutes(yesterday.getMinutes() - yesterday.getTimezoneOffset());
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+        if (userStats.lastFocusDate === yesterdayStr) {
+          // Continued Streak
+          userStats.currentStreak += 1;
+        } else {
+          // Streak Broken
+          userStats.currentStreak = 1;
+        }
+        userStats.lastFocusDate = todayDate;
+      }
+
+      localStorage.setItem('khinkaliUserStats', JSON.stringify(userStats));
+      renderStatsUI(true);
+    }
+
+    renderStatsUI();
+
     // --- Ambient Noise & Focus Tracking ---
 
     // Migrate old integer storage to JSON object format if necessary
@@ -1117,6 +1198,7 @@
       seconds = 0;
       updateDisplay(seconds);
       addFocusedTime(totalDurationSeconds);
+      checkAndCookKhinkali(); // Gamification Hook
       playSound();
       statusMessage.textContent = "✅ Time’s up!";
       localStorage.removeItem('khinkaliActiveTimer');

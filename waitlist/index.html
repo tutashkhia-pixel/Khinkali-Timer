@@ -5,7 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Khinkali Dash | The Digital Supra</title>
+    <meta name="description" content="The ultimate focus workspace and timer. Cook your tasks, build your table, and join the global Georgian diaspora. Join the waitlist today!" />
     <link rel="icon" href="logo.png" type="image/png">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Khinkali Dash | Waitlist">
+    <meta property="og:description" content="The ultimate focus workspace and timer. Join the waitlist today!">
+    <meta property="og:image" content="https://tutashkhia-pixel.github.io/Khinkali-Timer/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Georgian Fonts */
@@ -77,16 +85,59 @@
             Cook your tasks, build your table, and join the global Georgian diaspora.
         </p>
 
-        <form class="flex flex-col md:flex-row gap-4 w-full max-w-lg mx-auto"
-            onsubmit="event.preventDefault(); alert('მადლობა! Email saved to waitlist.'); this.reset();">
-            <input type="email" required placeholder="Your email (Email-ი)"
-                class="px-6 py-4 rounded-xl bg-gray-900/80 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-[#a65cf1] focus:ring-1 focus:ring-[#a65cf1] flex-grow transition-all">
-            <button type="submit"
-                class="px-8 py-4 bg-[#a65cf1] hover:bg-[#b87df5] text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-[#a65cf1]/30 hover:-translate-y-1">
-                Join Waitlist
-            </button>
+        <form name="waitlist" method="POST" data-netlify="true" data-netlify-recaptcha="true" netlify-honeypot="bot-field" class="flex flex-col gap-4 w-full max-w-lg mx-auto" id="waitlistForm">
+            <p class="hidden">
+                <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
+            </p>
+            <div class="flex flex-col md:flex-row gap-4">
+                <input type="email" name="email" required placeholder="Your email (Email-ი)"
+                    class="px-6 py-4 rounded-xl bg-gray-900/80 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-[#a65cf1] focus:ring-1 focus:ring-[#a65cf1] flex-grow transition-all">
+                <button type="submit"
+                    class="px-8 py-4 bg-[#a65cf1] hover:bg-[#b87df5] text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-[#a65cf1]/30 hover:-translate-y-1">
+                    Join Waitlist
+                </button>
+            </div>
+            <div data-netlify-recaptcha="true" class="flex justify-center mt-2"></div>
         </form>
+
+        <div id="successMessage" class="hidden text-[#a0e7e5] font-bold text-xl md:text-2xl pt-4">
+            მადლობა! You've successfully joined the waitlist. 🥟
+        </div>
     </div>
+
+    <script>
+        document.getElementById('waitlistForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            // Quick validation for recaptcha
+            if (formData.get('g-recaptcha-response') === '') {
+                alert('Please complete the CAPTCHA to prove you are human. 🥟');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Joining...';
+
+            fetch('/', {
+                method: 'POST',
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(formData).toString()
+            })
+            .then(() => {
+                form.classList.add('hidden');
+                document.getElementById('successMessage').classList.remove('hidden');
+            })
+            .catch((error) => {
+                alert('Oops! Something went wrong. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Join Waitlist';
+            });
+        });
+    </script>
 
     <p class="mt-12 text-gray-500 text-sm tracking-wider uppercase mtavruli">
         პროდუქტიულობა ქართულად • <span class="text-[#a0e7e5]">Coming soon</span>

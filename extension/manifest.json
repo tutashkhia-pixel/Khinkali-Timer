@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Khinkali Focus Blocker",
+  "version": "1.0",
+  "description": "Block distracting websites when your Khinkali Focus Timer is actively running.",
+  "icons": {
+    "128": "icon.png"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "notifications"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost:*/*",
+        "https://khinkali-dash.netlify.app/*"
+      ],
+      "js": ["content.js"]
+    }
+  ]
+}

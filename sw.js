@@ -1,4 +1,4 @@
-const CACHE_NAME = 'khinkali-dash-v7';
+const CACHE_NAME = 'khinkali-dash-v26';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',

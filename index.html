@@ -4,18 +4,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khinkali Timer</title>
+  <title>Khinkali Dash | The Digital Supra</title>
+  <meta name="description" content="The ultimate focus workspace and timer. Cook your tasks, build your table, and join the global Georgian diaspora." />
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ხინკალი">
   <link rel="apple-touch-icon" href="favicon.png">
-  <meta property="og:image" content="logo.png">
+  
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Khinkali Dash">
+  <meta property="og:description" content="The ultimate focus workspace and timer. Cook your tasks, build your table, and join the global Georgian diaspora.">
+  <meta property="og:image" content="https://tutashkhia-pixel.github.io/Khinkali-Timer/logo.png">
   <meta name="twitter:card" content="summary_large_image">
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
       --bg-color: #0d0b1a;
@@ -84,31 +92,19 @@
     }
 
     .dashboard {
-      display: grid;
-      grid-template-columns: 280px 1fr 300px;
+      display: flex;
+      justify-content: center;
       gap: 3rem;
       padding: 1.5rem 2rem;
       flex: 1;
       height: calc(100vh - 70px);
       transition: all 0.3s ease;
+      position: relative;
     }
 
-    .dashboard.hide-news {
-      grid-template-columns: 1fr 340px;
-    }
-
-    .dashboard.hide-kanban {
-      grid-template-columns: 320px 1fr;
-    }
-
-    .dashboard.hide-both {
-      grid-template-columns: 1fr;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .panel.hidden-panel {
-      display: none !important;
+    .dashboard.focus-mode-active .zen-nav {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .panel {
@@ -199,16 +195,115 @@
       padding-bottom: 8px;
     }
 
-    /* Auto Hide Mode */
-    .dashboard.focus-mode-active .news-panel,
-    .dashboard.focus-mode-active .kanban-panel {
-      display: none !important;
+    /* Side Panels Overlays */
+    .news-panel,
+    .kanban-panel {
+      position: fixed;
+      top: 80px;
+      bottom: 100px;
+      z-index: 50;
+      width: 320px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(0);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .dashboard.focus-mode-active {
-      grid-template-columns: 1fr !important;
-      max-width: 900px;
-      margin: 0 auto;
+    .news-panel {
+      left: 20px;
+      transform: translateX(-40px);
+    }
+
+    .news-panel.active {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .kanban-panel {
+      right: 20px;
+      transform: translateX(40px);
+    }
+
+    .kanban-panel.active {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Zen Navigation */
+    .zen-nav {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      background: rgba(15, 15, 25, 0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: 8px 12px;
+      border-radius: 40px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      transition: opacity 0.3s ease;
+    }
+
+    .zen-nav button {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 1rem;
+      padding: 10px 20px;
+      border-radius: 30px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-family: 'Noto Sans Georgian', 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .zen-nav button:hover {
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .zen-nav button.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Atmosphere Popover */
+    .atmosphere-popover {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(15, 15, 25, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: 15px 25px;
+      border-radius: 20px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 90;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .atmosphere-popover.active {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: all;
     }
 
     .setting-row {
@@ -276,7 +371,6 @@
       color: #888;
     }
 
-    /* Center Panel: Khinkali Timer */
     .timer-panel {
       text-align: center;
       justify-content: flex-start;
@@ -286,6 +380,8 @@
       border: none;
       backdrop-filter: none;
       box-shadow: none;
+      max-width: 600px;
+      width: 100%;
     }
 
     .greeting {
@@ -508,6 +604,40 @@
       opacity: 1;
     }
 
+    .shake-error {
+      animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+      border: 1px solid #ff5555 !important;
+    }
+
+    .shake-error::placeholder {
+      color: #ff5555 !important;
+      opacity: 1;
+    }
+
+    @keyframes shake {
+
+      10%,
+      90% {
+        transform: translate3d(-1px, 0, 0);
+      }
+
+      20%,
+      80% {
+        transform: translate3d(2px, 0, 0);
+      }
+
+      30%,
+      50%,
+      70% {
+        transform: translate3d(-4px, 0, 0);
+      }
+
+      40%,
+      60% {
+        transform: translate3d(4px, 0, 0);
+      }
+    }
+
     #statusMessage {
       margin-top: 1.5rem;
       font-size: 1.2rem;
@@ -643,6 +773,61 @@
       border-top: 1px solid var(--glass-border);
     }
 
+    /* Connections Modal Settings */
+    .connections-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .connection-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      padding: 12px 15px;
+      border-radius: 12px;
+    }
+
+    .conn-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .conn-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .conn-desc {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .conn-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .conn-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .conn-btn.connected {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: rgba(34, 197, 94, 0.4);
+      color: #4ade80;
+    }
+
     /* Responsive */
     @media (max-width: 1200px) {
       .dashboard {
@@ -676,6 +861,16 @@
 
       .panel {
         min-height: auto;
+      }
+
+      .news-panel,
+      .kanban-panel {
+        width: auto !important;
+        left: 15px !important;
+        right: 15px !important;
+        bottom: 100px;
+        background: rgba(15, 15, 25, 0.95);
+        padding: 1.5rem;
       }
 
       .timer {
@@ -723,16 +918,41 @@
 
       .khinkali {
         width: 80px;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
       }
 
       .dashboard {
         padding: 0.5rem;
-        gap: 1rem;
+        gap: 0.5rem;
       }
 
       .panel {
-        padding: 1rem;
+        padding: 0.8rem;
+      }
+
+      #timeInput {
+        font-size: 1.2rem;
+        padding: 10px;
+      }
+
+      .button-group button {
+        padding: 10px;
+        font-size: 0.9rem;
+      }
+
+      .tag-btn {
+        padding: 4px 10px;
+        font-size: 12px;
+      }
+
+      .focus-stats-container {
+        flex-direction: column;
+        gap: 5px !important;
+        text-align: center;
+      }
+
+      .atmosphere-popover {
+        bottom: 110px;
       }
     }
   </style>
@@ -741,7 +961,7 @@
 <body>
 
   <div class="top-bar">
-    <h2>Khinkali Dash</h2>
+    <h2 data-i18n="appTitle">Khinkali Dash</h2>
     <div style="display: flex; gap: 20px; align-items: center;">
       <!-- Gamification Stats -->
       <div id="statsContainer"
@@ -758,19 +978,68 @@
       <div class="settings-container">
         <button id="settingsBtn" onclick="toggleSettings()" class="settings-btn">⚙️</button>
         <div id="settingsModal" class="settings-modal hidden">
-          <div class="settings-title">Dash Settings</div>
+          <div
+            style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">
+            <div class="settings-title" style="margin-bottom:0; border-bottom:none; padding-bottom:0;"
+              data-i18n="settingsTitle">Dash Settings</div>
+            <button id="langToggleBtn" onclick="toggleLanguage()"
+              style="background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); color:white; border-radius:12px; padding:4px 8px; font-size:0.75rem; cursor:pointer;"
+              title="Change Language">🇬🇪 KA</button>
+          </div>
           <label class="setting-row">
-            <input type="checkbox" id="toggleNews" checked onchange="updateSettings()"> Show Tech News
+            <input type="checkbox" id="toggleAutoHide" onchange="updateSettings()"> <span data-i18n="autoHide">Auto-hide
+              during focus</span>
           </label>
-          <label class="setting-row">
-            <input type="checkbox" id="toggleKanban" checked onchange="updateSettings()"> Show Workday Planner
-          </label>
-          <label class="setting-row">
-            <input type="checkbox" id="toggleAutoHide" onchange="updateSettings()"> Auto-hide during focus
-          </label>
-          <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 5px 0;">
+          <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 15px 0;">
+
+          <div class="settings-title" data-i18n="connTitle">Connections (Sync)</div>
+          <div class="connections-list">
+
+            <div class="connection-row">
+              <div class="conn-info">
+                <div class="conn-title">Google Workspace</div>
+                <div class="conn-desc" data-i18n="googleDesc">Calendar & Tasks</div>
+              </div>
+              <button class="conn-btn" id="googleConnectBtn" onclick="handleGoogleConnect()"
+                data-i18n="connectBtn">Connect</button>
+            </div>
+
+            <div class="connection-row">
+              <div class="conn-info">
+                <div class="conn-title">Microsoft 365</div>
+                <div class="conn-desc" data-i18n="msDesc">Outlook & To-Do</div>
+              </div>
+              <button class="conn-btn" onclick="alert('Microsoft OAuth flow coming soon!')"
+                data-i18n="connectBtn">Connect</button>
+            </div>
+
+            <div class="connection-row">
+              <div class="conn-info">
+                <div class="conn-title">Apple Devices</div>
+                <div class="conn-desc" data-i18n="appleDesc">iCloud Reminders (iCal)</div>
+              </div>
+              <button class="conn-btn" onclick="prompt('Enter your public iCloud Calendar Webcal Link:')"
+                data-i18n="connectBtn">Connect</button>
+            </div>
+
+            <div class="connection-row" style="flex-direction: column; align-items: stretch; gap: 8px;">
+              <div class="conn-info">
+                <div class="conn-title" data-i18n="customFeedTitle">Custom Tech Feed (RSS)</div>
+                <div class="conn-desc" data-i18n="customFeedDesc">Override default tech news with your own URL</div>
+              </div>
+              <div style="display:flex; gap: 8px;">
+                <input type="text" id="customFeedUrl" placeholder="https://example.com/rss.xml"
+                  style="flex:1; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem;" />
+                <button class="conn-btn" onclick="saveCustomFeed()" data-i18n="saveBtn">Save</button>
+              </div>
+            </div>
+
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 15px 0;">
           <button onclick="playStartSound()"
-            style="padding: 6px; font-size: 0.9em; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 4px; color: white; cursor: pointer;">🔊
+            style="padding: 6px; font-size: 0.9em; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 4px; color: white; cursor: pointer;"
+            data-i18n="testAlarm">🔊
             Test Alarm Sound</button>
         </div>
       </div>
@@ -781,7 +1050,11 @@
 
     <!-- Left Panel: Hacker News -->
     <div class="panel news-panel">
-      <div class="panel-title">ტექ-სიახლეები</div>
+      <div class="panel-title" style="display:flex; justify-content:space-between; align-items:center;"><span
+          data-i18n="newsPanelTitle">ტექ-სიახლეები</span>
+        <span style="font-size:1.2rem; cursor:pointer; color:var(--text-color); opacity:0.6;"
+          onclick="document.querySelector('.news-panel').classList.remove('active')">✕</span>
+      </div>
       <div class="news-feed" id="newsFeed">
         <div style="text-align:center; padding: 20px; opacity: 0.6;">Loading top stories...</div>
       </div>
@@ -798,86 +1071,111 @@
       <div id="statusMessage">დავიწყოთ?</div>
 
       <div class="timer-controls">
-        <input id="timeInput" placeholder="დრო (მაგ. 25m, 1h30m, 90s)" autocomplete="off" />
+        <input id="timeInput" placeholder="დრო (მაგ. 25წ, 1სთ30წ, 90წმ)" data-i18n="timerPlaceholder"
+          onfocus="this.placeholder = ''" onblur="this.placeholder = t('timerPlaceholder')" autocomplete="off" />
         <div class="button-group">
-          <button onclick="startTimer()">შევუდგეთ</button>
-          <button id="pauseBtn" onclick="togglePause()">პაუზა</button>
-          <button onclick="resetTimer()">განულება</button>
+          <button onclick="startTimer()" data-i18n="btnStart">შევუდგეთ</button>
+          <button id="pauseBtn" onclick="togglePause()" data-i18n="btnPause">პაუზა</button>
+          <button onclick="resetTimer()" data-i18n="btnReset">განულება</button>
         </div>
+        <button onclick="generateStoryImage()"
+          style="margin-top: 15px; width: 100%; background: linear-gradient(135deg, #FF4B2B, #FF416C); font-weight: bold; padding: 14px; border-radius: 12px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s, box-shadow 0.2s;"
+          onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 6px 20px rgba(255, 65, 108, 0.6)';"
+          onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(255, 65, 108, 0.4)';"><span
+            data-i18n="btnShare">📸 გააზიარე სთორიში</span></button>
 
-        <div class="tag-group" id="tagGroup">
-          <button class="tag-btn active" onclick="selectTag(this, 'Work')">💻 სამუშაო</button>
-          <button class="tag-btn" onclick="selectTag(this, 'Study')">📚 სწავლა</button>
-          <button class="tag-btn" onclick="selectTag(this, 'Coding')">🧠 პროგრამირება</button>
-          <button class="tag-btn" onclick="selectTag(this, 'Chores')">🛠 საოჯახო</button>
-          <button class="tag-btn" onclick="selectTag(this, 'Rest')">🧘 დასვენება</button>
+        <div class="tag-group" id="tagGroup" style="margin-top: 15px;">
+          <button class="tag-btn active" onclick="selectTag(this, 'Work')" data-i18n="tagWork">💻 სამუშაო</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Study')" data-i18n="tagStudy">📚 სწავლა</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Coding')" data-i18n="tagCoding">🧠 პროგრამირება</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Chores')" data-i18n="tagChores">🛠 საოჯახო</button>
+          <button class="tag-btn" onclick="selectTag(this, 'Rest')" data-i18n="tagRest">🧘 დასვენება</button>
         </div>
-
-        <div
-          style="margin-top: 15px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
-            <button id="ambientBtn" onclick="toggleAmbientNoise()"
-              style="background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 6px 12px; font-size: 14px; flex: none;">🎧
-              წვიმა: გამორთულია</button>
-            <input type="range" id="rainVolume" min="0" max="1" step="0.05" value="1"
-              style="width: 70px; accent-color: var(--accent-color);" onchange="updateAmbientVolume()">
-          </div>
-          <div class="focus-stats-container"
-            style="margin-top:20px; padding: 15px 20px; background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid var(--glass-border); border-radius: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%;">
-            <span
-              style="font-size: 0.9rem; font-family: 'Noto Sans Georgian', 'Inter', sans-serif; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px;">🍽
-              მოხარშული დრო:</span>
-            <span id="dailyFocusVal" style="font-weight: bold; color: #a0e7e5; font-size: 1.2rem;">0m</span>
-            <div class="focus-tooltip" id="focusTooltip">სუფრა ცარიელია.</div>
-          </div>
+        <div class="focus-stats-container" style="margin-top:20px; padding: 15px 20px; background: linear-gradient(135deg, rgba(255,255,255,0.05),
+          rgba(255,255,255,0.01)); border: 1px solid var(--glass-border); border-radius: 30px; box-shadow: 0 8px 32px
+          rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.02); display: flex; align-items: center; justify-content:
+          center; gap: 15px; width: 100%;">
+          <span
+            style="font-size: 0.9rem; font-family: 'Noto Sans Georgian', 'Inter', sans-serif; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px;"
+            data-i18n="focusTimeLabel">🍽 მოხარშული დრო:</span>
+          <span id="dailyFocusVal" style="font-weight: bold; color: #a0e7e5; font-size: 1.2rem;">0m</span>
+          <div class="focus-tooltip" id="focusTooltip">სუფრა ცარიელია.</div>
         </div>
-
-        <button id="stopAlarmBtn" onclick="stopAlarmSound()"
-          style="display:none; width:100%; margin-top:10px; background:#ff5555;">ხმა გათიშე</button>
-
       </div>
-    </div>
 
-    <!-- Right Panel: Kanban Board -->
-    <div class="panel kanban-panel">
-      <div class="panel-title">დღის საქმეები</div>
-      <div class="kanban-board">
-        <div class="kanban-input-group">
-          <input type="text" id="newTaskInput" placeholder="ახალი დავალება..." autocomplete="off" />
-          <input type="number" id="newTaskEst" placeholder="Est. 🥟" min="1" max="10"
-            style="flex: none; width: 70px; text-align: center; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.2); color: white;"
-            title="Estimated Khinkalis (Pomodoros)">
-          <button onclick="addTask()">დამატება</button>
+      <button id="stopAlarmBtn" onclick="stopAlarmSound()"
+        style="display:none; width:100%; margin-top:10px; background:transparent; border: 1px solid rgba(255,85,85,0.4); color: #ff5555; padding: 12px; border-radius: 12px; transition: all 0.2s;"
+        onmouseover="this.style.background='rgba(255,85,85,0.1)'" onmouseout="this.style.background='transparent'">🔇
+        ხმის გათიშვა</button>
+
+    </div>
+  </div>
+
+  <!-- Right Panel: Kanban Board -->
+  <div class="panel kanban-panel">
+    <div class="panel-title" style="display:flex; justify-content:space-between; align-items:center;"><span
+        data-i18n="kanbanPanelTitle">დღის საქმეები</span>
+      <span style="font-size:1.2rem; cursor:pointer; color:var(--text-color); opacity:0.6;"
+        onclick="document.querySelector('.kanban-panel').classList.remove('active')">✕</span>
+    </div>
+    <div class="kanban-board">
+      <div class="kanban-input-group">
+        <input type="text" id="newTaskInput" placeholder="ახალი დავალება..." data-i18n="kanbanNewTask"
+          autocomplete="off" />
+        <input type="number" id="newTaskEst" placeholder="რამდენი?" data-i18n="kanbanEst" min="1" max="10"
+          style="flex: none; width: 100px; text-align: center; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.2); color: white;"
+          title="რაოდენობა">
+        <button onclick="addTask()" data-i18n="kanbanAdd">დამატება</button>
+      </div>
+
+      <div class="kanban-columns">
+        <div class="kanban-column" id="col-todo">
+          <div class="kanban-column-header"><span data-i18n="kanbanTodo">გასაკეთებელი</span> <span
+              id="count-todo">0</span></div>
+          <div class="kanban-cards" id="cards-todo" data-status="todo"></div>
         </div>
 
-        <div class="kanban-columns">
-          <div class="kanban-column" id="col-todo">
-            <div class="kanban-column-header">გასაკეთებელი <span id="count-todo">0</span></div>
-            <div class="kanban-cards" id="cards-todo" data-status="todo"></div>
-          </div>
+        <div class="kanban-column" id="col-progress">
+          <div class="kanban-column-header"><span data-i18n="kanbanProgress">მიმდინარე</span> <span
+              id="count-progress">0</span></div>
+          <div class="kanban-cards" id="cards-progress" data-status="progress"></div>
+        </div>
 
-          <div class="kanban-column" id="col-progress">
-            <div class="kanban-column-header">მიმდინარე <span id="count-progress">0</span></div>
-            <div class="kanban-cards" id="cards-progress" data-status="progress"></div>
-          </div>
-
-          <div class="kanban-column" id="col-done">
-            <div class="kanban-column-header" style="color:#a0e7e5;">დასრულებული <span id="count-done">0</span></div>
-            <div class="kanban-cards" id="cards-done" data-status="done"></div>
-          </div>
+        <div class="kanban-column" id="col-done">
+          <div class="kanban-column-header" style="color:#a0e7e5;"><span data-i18n="kanbanDone">დასრულებული</span> <span
+              id="count-done">0</span></div>
+          <div class="kanban-cards" id="cards-done" data-status="done"></div>
         </div>
       </div>
     </div>
   </div>
+  </div>
+  </div>
+  <!-- Zen Navigation Bar -->
+  <nav class="zen-nav" id="zenNav">
+    <button id="nav-news" onclick="toggleZenPanel('news')" data-i18n="zenFeed">📰 Feed</button>
+    <button id="nav-tasks" onclick="toggleZenPanel('tasks')" data-i18n="zenTasks">✅ Tasks</button>
+    <button id="nav-atmosphere" onclick="toggleZenPanel('atmosphere')" data-i18n="zenAtmo">🎧 Atmosphere</button>
+  </nav>
+
+  <!-- Atmosphere Popover -->
+  <div id="atmospherePopover" class="atmosphere-popover">
+    <button id="ambientBtn" onclick="toggleAmbientNoise()"
+      style="background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-family: 'Noto Sans Georgian', sans-serif; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); padding: 0;">
+      🎧
+    </button>
+    <input type="range" id="rainVolume" min="0" max="1" step="0.05" value="1"
+      style="width: 100px; accent-color: var(--accent-color); cursor: pointer;" onchange="updateAmbientVolume()">
   </div>
 
   <div id="story-template"
     style="width: 1080px; height: 1920px; display: none; position: absolute; left: -9999px; background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #0f0c29); flex-direction: column; align-items: center; justify-content: center; color: white;">
-    <h1
-      style="font-family: 'Noto Sans Georgian', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 80px; text-align: center; margin-bottom: 2rem;">
+    <h1 data-i18n="storyTitle"
+      style="font-family: 'Noto Sans Georgian', 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 80px; text-align: center; margin-bottom: 2rem;">
       ჩემი დღევანდელი მოსავალი</h1>
-    <div id="story-khinkali-plate"
-      style="font-size: 180px; margin: 80px 0; filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.5));">🥟</div>
+    <div id="story-khinkali-plate" style="margin: 80px 0; text-align: center;">
+      <img src="logo.png" style="width: 180px; height: 180px; filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.5));">
+    </div>
     <h2 id="story-user-name"
       style="font-family: 'Noto Sans Georgian', sans-serif; font-weight: 700; font-size: 60px; color: #a0e7e5;"></h2>
   </div>
@@ -893,6 +1191,177 @@
   </div>
 
   <script>
+    // --- Internationalization (i18n) Engine ---
+    const translations = {
+      en: {
+        appTitle: "Khinkali Dash",
+        cooked: "Cooked",
+        streak: "Day Streak",
+        settingsTitle: "Dash Settings",
+        autoHide: "Auto-hide during focus",
+        connTitle: "Connections (Sync)",
+        googleDesc: "Calendar & Tasks",
+        msDesc: "Outlook & To-Do",
+        appleDesc: "iCloud Reminders (iCal)",
+        customFeedTitle: "Custom Tech Feed (RSS)",
+        customFeedDesc: "Override default tech news with your own URL",
+        connectBtn: "Connect",
+        saveBtn: "Save",
+        testAlarm: "🔊 Test Alarm Sound",
+        newsPanelTitle: "Tech News",
+        kanbanPanelTitle: "Daily Tasks",
+        kanbanTodo: "To-Do",
+        kanbanProgress: "In Progress",
+        kanbanDone: "Done",
+        kanbanNewTask: "New task...",
+        kanbanEst: "How many?",
+        kanbanAdd: "Add",
+        timerPlaceholder: "Time (e.g. 25m, 1h30m, 90s)",
+        btnStart: "Start",
+        btnPause: "Pause",
+        btnResume: "Resume",
+        btnReset: "Reset",
+        btnShare: "📸 Share to Story",
+        tagWork: "💻 Work",
+        tagStudy: "📚 Study",
+        tagCoding: "🧠 Coding",
+        tagChores: "🛠 Chores",
+        tagRest: "🧘 Rest",
+        focusTimeLabel: "🍽 Time Cooked:",
+        zenFeed: "📰 Feed",
+        zenTasks: "✅ Tasks",
+        zenAtmo: "🎧 Atmosphere",
+        storyTitle: "MY HARVEST TODAY",
+        footerText: "Khinkali Dash v2000",
+        welcomeGreeting: "Hello.",
+        namePlaceholder: "What is your name?",
+        statusReady: "Ready to start?",
+        statusFocusing: "Khinkali is boiling...",
+        statusPaused: "⏸ Paused",
+        statusPausedRestored: "⏸ Paused (Restored)",
+        statusRestored: "⏱ Time restored!",
+        statusFinished: "✅ Time is up!",
+        statusTaskFinished: "✅ Feast is ready!",
+        timeError: "Please enter time! (e.g. 25m)",
+        alarmStop: "🔇 Stop Alarm",
+        rainOn: "🎧 Rain: On",
+        rainOff: "🎧 Rain: Off",
+        feedLoading: "Loading feed...",
+        feedError: "Could not load feed. Check connection or URL.",
+        storyLoading: "⏳ Preparing photo...",
+        storyFail: "Image generation failed.",
+        guest: "Guest",
+        googleSync: "Sync",
+        googlePrompt: "Enter your Google OAuth Client ID:",
+        googleError: "Calendar Sync failed. Check Console.",
+        eventTag: "📅"
+      },
+      ka: {
+        appTitle: "Khinkali Dash",
+        cooked: "მოხარშული",
+        streak: "დღის სტრიკი",
+        settingsTitle: "პარამეტრები (Settings)",
+        autoHide: "ავტომატური დამალვა ფოკუსისას",
+        connTitle: "სინქრონიზაცია (Connections)",
+        googleDesc: "კალენდარი და დავალებები",
+        msDesc: "Outlook და დავალებები",
+        appleDesc: "iCloud შეხსენებები",
+        customFeedTitle: "რსს არხი (Custom Feed)",
+        customFeedDesc: "შეცვალეთ სტანდარტული არხი თქვენი ლინკით",
+        connectBtn: "დაკავშირება",
+        saveBtn: "შენახვა",
+        testAlarm: "🔊 ტესტ-მაღვიძარა",
+        newsPanelTitle: "ტექ-სიახლეები",
+        kanbanPanelTitle: "დღის საქმეები",
+        kanbanTodo: "გასაკეთებელი",
+        kanbanProgress: "მიმდინარე",
+        kanbanDone: "დასრულებული",
+        kanbanNewTask: "ახალი დავალება...",
+        kanbanEst: "რამდენი?",
+        kanbanAdd: "დამატება",
+        timerPlaceholder: "დრო (მაგ. 25წ, 1სთ30წ, 90წმ)",
+        btnStart: "შევუდგეთ",
+        btnPause: "პაუზა",
+        btnResume: "გაგრძელება",
+        btnReset: "განულება",
+        btnShare: "📸 გააზიარე სთორიში",
+        tagWork: "💻 სამუშაო",
+        tagStudy: "📚 სწავლა",
+        tagCoding: "🧠 პროგრამირება",
+        tagChores: "🛠 საოჯახო",
+        tagRest: "🧘 დასვენება",
+        focusTimeLabel: "🍽 მოხარშული დრო:",
+        zenFeed: "📰 სიახლეები",
+        zenTasks: "✅ საქმეები",
+        zenAtmo: "🎧 ატმოსფერო",
+        storyTitle: "ჩემი დღევანდელი მოსავალი",
+        footerText: "Khinkali Dash v2000",
+        welcomeGreeting: "გამარჯობა.",
+        namePlaceholder: "რა გქვია?",
+        statusReady: "დავიწყოთ?",
+        statusFocusing: "ხინკალი იხარშება...",
+        statusPaused: "⏸ პაუზა",
+        statusPausedRestored: "⏸ პაუზა (აღდგენილი)",
+        statusRestored: "⏱ დრო აღდგა ფონიდან!",
+        statusFinished: "✅ დრო გავიდა!",
+        statusTaskFinished: "✅ გაიშალა სუფრა!",
+        timeError: "ჩაწერეთ დრო! (მაგ. 25წ)",
+        alarmStop: "🔇 ხმის გათიშვა",
+        rainOn: "🎧 <span style='font-size:14px; margin-left:6px;'>წვიმა</span>",
+        rainOff: "🎧",
+        feedLoading: "იტვირთება...",
+        feedError: "სიახლეები ვერ ჩაიტვირთა. შეამოწმეთ კავშირი ან მისამართი.",
+        storyLoading: "⏳ ვამზადებთ ფოტოს...",
+        storyFail: "სურათის გენერაცია ვერ მოხერხდა.",
+        guest: "სტუმარი",
+        googleSync: "სინქრონიზაცია",
+        googlePrompt: "შეიყვანეთ Google OAuth Client ID:",
+        googleError: "კალენდრის სინქრონიზაცია ვერ მოხერხდა.",
+        eventTag: "📅"
+      }
+    };
+
+    let currentLang = localStorage.getItem('khinkaliLang') || 'ka';
+
+    // Helper translation accessor
+    function t(key) {
+      return translations[currentLang][key] || key;
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ka' : 'en';
+      localStorage.setItem('khinkaliLang', currentLang);
+      updateLanguageDOM();
+    }
+
+    function updateLanguageDOM() {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (el.tagName === 'INPUT') {
+          if (el.hasAttribute('placeholder')) el.placeholder = t(key);
+        } else {
+          el.innerHTML = t(key); // Use innerHTML to allow tags (like in rain toggles)
+        }
+      });
+      // Toggle button text
+      const langBtn = document.getElementById('langToggleBtn');
+      if (langBtn) langBtn.textContent = currentLang === 'en' ? '🇬🇪 KA' : '🇺🇸 EN';
+
+      // Check for Google OAuth connection
+      const googleBtn = document.getElementById('googleConnectBtn');
+      // We no longer check for client ID in local storage. 
+      // A more robust check would be to determine if the user has a valid OAuth token, 
+      // but for now, the "Connect" button will remain a trigger for synchronization.
+
+      // Notify active dynamic components
+      updateGreeting();
+      renderStatsUI();
+      renderTasks();
+      updateDisplay();
+      if (!isPaused && seconds <= 0) document.getElementById("statusMessage").textContent = t('statusReady');
+      if (typeof fetchNews === 'function') fetchNews();
+    }
+
     // --- Gamification & Stats Engine ---
     let userStats = JSON.parse(localStorage.getItem('khinkaliUserStats')) || {
       totalKhinkalisCooked: 0,
@@ -916,14 +1385,17 @@
         userStats.todayKhinkalis = 0;
       }
 
+      const countTextEl = document.getElementById('khinkaliCountText');
       const countEl = document.getElementById('khinkaliCount');
       const streakEl = document.getElementById('fireStreak');
 
-      countEl.textContent = `🥟 ${userStats.totalKhinkalisCooked} Cooked`;
+      if (countTextEl) {
+        countTextEl.textContent = `${userStats.totalKhinkalisCooked} ${t('cooked')}`;
+      }
 
       if (userStats.currentStreak > 0) {
         streakEl.style.display = 'block';
-        streakEl.textContent = `🔥 ${userStats.currentStreak} Day Streak`;
+        streakEl.textContent = `🔥 ${userStats.currentStreak} ${t('streak')}`;
       } else {
         streakEl.style.display = 'none';
       }
@@ -1030,12 +1502,18 @@
       const btn = document.getElementById('ambientBtn');
       if (isAmbientPlaying) {
         ambientAudio.pause();
-        btn.textContent = '🎧 Rain: Off';
+        btn.innerHTML = t('rainOff');
+        btn.style.width = '40px';
+        btn.style.borderRadius = '50%';
+        btn.style.padding = '0';
         btn.style.background = 'transparent';
         btn.style.color = 'var(--accent-color)';
       } else {
         ambientAudio.play().catch(e => console.error("Audio block:", e));
-        btn.textContent = '🎧 Rain: On';
+        btn.innerHTML = t('rainOn');
+        btn.style.width = 'auto';
+        btn.style.borderRadius = '20px';
+        btn.style.padding = '0 16px';
         btn.style.background = 'var(--accent-color)';
         btn.style.color = 'white';
       }
@@ -1094,13 +1572,8 @@
     }
 
     function playStartSound() {
-      const beep = document.getElementById("alarm-sound");
-      beep.currentTime = 0;
-      beep.play().catch(e => console.error(e));
-      setTimeout(() => {
-        beep.pause();
-        beep.currentTime = 0;
-      }, 3000);
+      playBeep(440, 'sine', 0.15);
+      setTimeout(() => playBeep(660, 'sine', 0.2), 150);
     }
     function playPauseSound() { playBeep(330, 'triangle', 0.2); }
     function playResumeSound() { playBeep(550, 'triangle', 0.2); }
@@ -1119,14 +1592,14 @@
       if (h > 0) {
         const displayStr = `${h}:${mins}:${secs}`;
         display.textContent = displayStr;
-        document.title = `(${displayStr}) ხინკლის დაფა`;
+        document.title = `(${displayStr}) ${t('appTitle')}`;
       } else {
         const displayStr = `${mins}:${secs}`;
         display.textContent = displayStr;
         if (calcSeconds > 0) {
-          document.title = `(${displayStr}) ხინკლის დაფა`;
+          document.title = `(${displayStr}) ${t('appTitle')}`;
         } else {
-          document.title = `ხინკლის დაფა`;
+          document.title = t('appTitle');
         }
       }
 
@@ -1151,7 +1624,10 @@
       document.getElementById('stopAlarmBtn').style.display = 'none';
       if (isAmbientPlaying) {
         ambientAudio.pause();
-        document.getElementById('ambientBtn').textContent = '🎧 Rain: Off';
+        document.getElementById('ambientBtn').innerHTML = '🎧';
+        document.getElementById('ambientBtn').style.width = '40px';
+        document.getElementById('ambientBtn').style.borderRadius = '50%';
+        document.getElementById('ambientBtn').style.padding = '0';
         document.getElementById('ambientBtn').style.background = 'transparent';
         document.getElementById('ambientBtn').style.color = 'var(--accent-color)';
         isAmbientPlaying = false;
@@ -1160,6 +1636,34 @@
 
     function parseTime(input) {
       let totalS = 0;
+      input = input.toLowerCase();
+
+      // Normalize spaces (e.g., "2 წამი" -> "2წამი")
+      input = input.replace(/\s+/g, '');
+
+      // Convert spelled out Georgian numbers
+      const numMap = { 'ერთი': '1', 'ორი': '2', 'სამი': '3', 'ოთხი': '4', 'ხუთი': '5', 'ექვსი': '6', 'შვიდი': '7', 'რვა': '8', 'ცხრა': '9', 'ათი': '10', 'ნახევარი': '30' };
+      for (const [word, digit] of Object.entries(numMap)) {
+        input = input.replace(new RegExp(word, 'g'), digit);
+      }
+
+      // Map Georgian characters (abbreviations, full words, and QWERTY equivalents) to English time units
+
+      // 1. Full words
+      input = input.replace(/საათი/g, 'h');
+      input = input.replace(/წუთი/g, 'm');
+      input = input.replace(/წამი/g, 's');
+
+      // 2. Two-letter abbreviations
+      input = input.replace(/სთ/g, 'h');
+      input = input.replace(/წთ/g, 'm');
+      input = input.replace(/წმ/g, 's');
+
+      // 3. Single-letter abbreviations and QWERTY map
+      input = input.replace(/ჰ/g, 'h');
+      input = input.replace(/წ|მ/g, 'm');
+      input = input.replace(/ს/g, 's');
+
       const pattern = /(\d+)([hms])/gi;
       let match;
       while ((match = pattern.exec(input)) !== null) {
@@ -1204,16 +1708,16 @@
             remainingWhenPaused = state.remainingWhenPaused;
             seconds = Math.ceil(remainingWhenPaused / 1000);
             updateDisplay(seconds);
-            pauseBtn.textContent = "Resume";
-            statusMessage.textContent = "⏸ პაუზა (აღდგენილი)";
+            pauseBtn.textContent = t('btnResume');
+            statusMessage.textContent = t('statusPausedRestored');
           } else {
             // It was running
             const now = Date.now();
             if (state.targetEndTime > now) {
               targetEndTime = state.targetEndTime;
               isPaused = false;
-              pauseBtn.textContent = "Pause";
-              statusMessage.textContent = "⏱ დრო აღდგა ფონიდან!";
+              pauseBtn.textContent = t('btnPause');
+              statusMessage.textContent = t('statusRestored');
               timerWorker.postMessage({ command: 'start' });
             } else {
               // Time expired while afk
@@ -1254,13 +1758,14 @@
           saveTasks(); // Re-renders the board with updated stats
         }
         activeDragedTaskId = null; // Clear it for the next timer
-        statusMessage.textContent = "✅ გაიშალა სუფრა!";
+        statusMessage.textContent = t('statusTaskFinished');
       } else {
-        statusMessage.textContent = "✅ დრო გავიდა!";
+        statusMessage.textContent = t('statusFinished');
       }
 
       playSound();
       localStorage.removeItem('khinkaliActiveTimer');
+      window.postMessage({ type: "KHINKALI_TIMER", state: "stopped" }, "*");
     }
 
     timerWorker.onmessage = function (e) {
@@ -1290,14 +1795,19 @@
         input = `${parts[0]}m${parts[1]}s`;
       } else if (/^\d+$/.test(input)) {
         input += 'm'; // Interpret plain numbers as minutes
-      } else if (/^\d+\s+\d+$/.test(input)) {
-        const parts = input.split(/\s+/);
-        input = `${parts[0]}m${parts[1]}s`;
       }
+      // Removed the restrictive space splitter entirely to let parseTime handle raw spaced strings like "2 წამი"
+
 
       const totalS = parseTime(input);
       if (!totalS) {
-        alert("Please enter a valid time (e.g. 17m30s, 1h, or 90s).");
+        timeInput.classList.add('shake-error');
+        const oldPlaceholder = timeInput.placeholder;
+        timeInput.placeholder = t('timeError');
+        setTimeout(() => {
+          timeInput.classList.remove('shake-error');
+          timeInput.placeholder = oldPlaceholder;
+        }, 1500);
         return;
       }
 
@@ -1308,8 +1818,8 @@
 
       updateDisplay(seconds);
       isPaused = false;
-      pauseBtn.textContent = "Pause";
-      statusMessage.textContent = "ხინკალი იხარშება...";
+      pauseBtn.textContent = t('btnPause');
+      statusMessage.textContent = t('statusFocusing');
 
       if (zenSettings.autoHide) {
         document.querySelector('.dashboard').classList.add('focus-mode-active');
@@ -1320,6 +1830,7 @@
       playStartSound();
       saveTimerState();
       timerWorker.postMessage({ command: 'start' });
+      window.postMessage({ type: "KHINKALI_TIMER", state: "running" }, "*");
     }
 
     function togglePause() {
@@ -1331,18 +1842,20 @@
         clearInterval(steamInterval);
         document.querySelector('.dashboard').classList.remove('focus-mode-active');
         remainingWhenPaused = targetEndTime - Date.now();
-        statusMessage.textContent = "⏸ პაუზა";
-        pauseBtn.textContent = "Resume";
+        statusMessage.textContent = t('statusPaused');
+        pauseBtn.textContent = t('btnResume');
         playPauseSound();
+        window.postMessage({ type: "KHINKALI_TIMER", state: "paused" }, "*");
       } else {
         // Resuming
         if (zenSettings.autoHide) document.querySelector('.dashboard').classList.add('focus-mode-active');
         steamInterval = setInterval(spawnSteam, 600);
         targetEndTime = Date.now() + remainingWhenPaused;
-        statusMessage.textContent = "▶️ გაგრძელება";
-        pauseBtn.textContent = "Pause";
+        statusMessage.textContent = `▶️ ${t('btnResume')}`;
+        pauseBtn.textContent = t('btnPause');
         playResumeSound();
         timerWorker.postMessage({ command: 'start' });
+        window.postMessage({ type: "KHINKALI_TIMER", state: "running" }, "*");
       }
       saveTimerState();
     }
@@ -1364,11 +1877,12 @@
       targetEndTime = 0;
       updateDisplay(seconds);
       isPaused = false;
-      pauseBtn.textContent = "პაუზა";
-      statusMessage.textContent = "🔁 დრო განულდა.";
+      pauseBtn.textContent = t('btnPause');
+      statusMessage.textContent = t('statusReady');
       stopAlarmSound();
       playResetSound();
       localStorage.removeItem('khinkaliActiveTimer');
+      window.postMessage({ type: "KHINKALI_TIMER", state: "stopped" }, "*");
     }
 
     // Initialize Timer from LocalStorage on load
@@ -1412,9 +1926,9 @@
       greetingElement.style.marginBottom = "1rem";
 
       if (savedName) {
-        greetingElement.innerHTML = `გამარჯობა, <span style="font-family: 'Noto Sans Georgian', 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; color: #a0e7e5;">${savedName}</span>.`;
+        greetingElement.innerHTML = `${t('welcomeGreeting')} <span style="font-family: 'Noto Sans Georgian', 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; color: #a0e7e5;">${savedName}</span>.`;
       } else {
-        greetingElement.innerHTML = `გამარჯობა.<br><input type="text" id="nameInput" placeholder="რა გქვია?" style="background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; max-width: 300px; width:100%; text-align:center; font-family: inherit; font-size: 2.2rem; outline:none; margin-top: 10px; padding-bottom: 5px;" autocomplete="off" onkeypress="if(event.key === 'Enter') saveName(this.value)">`;
+        greetingElement.innerHTML = `${t('welcomeGreeting')}<br><div style="display:flex; justify-content:center; align-items:flex-end; gap:10px;"><input type="text" id="nameInput" placeholder="${t('namePlaceholder')}" style="background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; max-width: 250px; width:100%; text-align:center; font-family: inherit; font-size: 2.2rem; outline:none; margin-top: 10px; padding-bottom: 5px;" autocomplete="off" onkeypress="if(event.key === 'Enter') saveName(this.value)" onblur="setTimeout(() => saveName(document.getElementById('nameInput').value), 200)"><button onclick="saveName(document.getElementById('nameInput').value)" style="background:var(--accent-color); color:var(--bg-color); border:none; border-radius:50%; width:40px; height:40px; min-width:40px; font-size:1.4rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-bottom:5px;">✓</button></div>`;
       }
     }
 
@@ -1429,15 +1943,12 @@
 
     // --- Zen Mode Settings ---
     const settingsModal = document.getElementById('settingsModal');
-    const toggleNewsCheckbox = document.getElementById('toggleNews');
-    const toggleKanbanCheckbox = document.getElementById('toggleKanban');
+    const toggleAutoHideCheckbox = document.getElementById('toggleAutoHide');
     const newsPanel = document.querySelector('.news-panel');
     const kanbanPanel = document.querySelector('.kanban-panel');
     const dashboardContainer = document.querySelector('.dashboard');
 
-    let zenSettings = JSON.parse(localStorage.getItem('khinkaliZenSettings')) || {
-      showNews: true,
-      showKanban: true,
+    let zenSettings = {
       autoHide: false
     };
 
@@ -1454,68 +1965,98 @@
     });
 
     function updateSettings() {
-      zenSettings.showNews = toggleNewsCheckbox.checked;
-      zenSettings.showKanban = toggleKanbanCheckbox.checked;
-      zenSettings.autoHide = document.getElementById('toggleAutoHide').checked;
+      zenSettings.autoHide = toggleAutoHideCheckbox.checked;
       localStorage.setItem('khinkaliZenSettings', JSON.stringify(zenSettings));
-      applySettings();
     }
 
-    function applySettings() {
-      toggleNewsCheckbox.checked = zenSettings.showNews;
-      toggleKanbanCheckbox.checked = zenSettings.showKanban;
-      document.getElementById('toggleAutoHide').checked = zenSettings.autoHide;
+    function loadSettings() {
+      const savedSettings = localStorage.getItem('khinkaliZenSettings');
 
-      if (zenSettings.showNews) {
-        newsPanel.classList.remove('hidden-panel');
-      } else {
-        newsPanel.classList.add('hidden-panel');
+      if (savedSettings) {
+        zenSettings = JSON.parse(savedSettings);
+        if (zenSettings.autoHide === undefined) zenSettings.autoHide = false;
       }
 
-      if (zenSettings.showKanban) {
-        kanbanPanel.classList.remove('hidden-panel');
-      } else {
-        kanbanPanel.classList.add('hidden-panel');
-      }
+      toggleAutoHideCheckbox.checked = zenSettings.autoHide;
 
-      dashboardContainer.classList.remove('hide-news', 'hide-kanban', 'hide-both');
-      if (!zenSettings.showNews && !zenSettings.showKanban) {
-        dashboardContainer.classList.add('hide-both');
-      } else if (!zenSettings.showNews) {
-        dashboardContainer.classList.add('hide-news');
-      } else if (!zenSettings.showKanban) {
-        dashboardContainer.classList.add('hide-kanban');
+      // Load Custom Feed setting
+      const savedFeed = localStorage.getItem('khinkaliCustomFeed');
+      if (savedFeed) {
+        document.getElementById('customFeedUrl').value = savedFeed;
       }
     }
 
-    applySettings(); // Initialize on load
+    function saveCustomFeed() {
+      const url = document.getElementById('customFeedUrl').value.trim();
+      localStorage.setItem('khinkaliCustomFeed', url);
+      alert('Custom feed saved! It will load on next refresh.');
+      fetchNews(); // Reload immediately
+    }
 
-    // --- News Widget (Hacker News API) ---
+    // --- Zen Navigation Logic ---
+    function toggleZenPanel(panelType) {
+      if (panelType === 'news') {
+        document.querySelector('.news-panel').classList.toggle('active');
+        document.getElementById('nav-news').classList.toggle('active');
+
+        // Auto-close others
+        document.querySelector('.kanban-panel').classList.remove('active');
+        document.getElementById('nav-tasks').classList.remove('active');
+        document.getElementById('atmospherePopover').classList.remove('active');
+        document.getElementById('nav-atmosphere').classList.remove('active');
+      } else if (panelType === 'tasks') {
+        document.querySelector('.kanban-panel').classList.toggle('active');
+        document.getElementById('nav-tasks').classList.toggle('active');
+
+        document.querySelector('.news-panel').classList.remove('active');
+        document.getElementById('nav-news').classList.remove('active');
+        document.getElementById('atmospherePopover').classList.remove('active');
+        document.getElementById('nav-atmosphere').classList.remove('active');
+      } else if (panelType === 'atmosphere') {
+        document.getElementById('atmospherePopover').classList.toggle('active');
+        document.getElementById('nav-atmosphere').classList.toggle('active');
+
+        document.querySelector('.kanban-panel').classList.remove('active');
+        document.getElementById('nav-tasks').classList.remove('active');
+        document.querySelector('.news-panel').classList.remove('active');
+        document.getElementById('nav-news').classList.remove('active');
+      }
+    }
+
+    loadSettings(); // Initialize on load
+
+    // --- Unified Feed Logic (Custom RSS or Default Georgian Tech) ---
     async function fetchNews() {
       const newsFeed = document.getElementById('newsFeed');
+      newsFeed.innerHTML = `<div style="text-align:center; padding: 20px; opacity: 0.6;">${t('feedLoading')}</div>`;
       try {
-        const response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
-        const storyIds = await response.json();
+        const savedUrl = localStorage.getItem('khinkaliCustomFeed');
+        const rssUrl = savedUrl ? savedUrl : 'https://publika.ge/feed';
 
-        const top8Ids = storyIds.slice(0, 8);
-        const storyPromises = top8Ids.map(id => fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(res => res.json()));
-        const stories = await Promise.all(storyPromises);
+        // Proxy through rss2json to avoid CORS issues
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
+        const data = await response.json();
 
-        newsFeed.innerHTML = '';
-        stories.forEach(story => {
-          if (!story) return;
-          const div = document.createElement('div');
-          div.className = 'news-item';
-          const domain = story.url ? new URL(story.url).hostname.replace('www.', '') : 'news.yCombinator.com';
-          div.innerHTML = `
-            <a href="${story.url || `https://news.ycombinator.com/item?id=${story.id}`}" target="_blank" rel="noopener">${story.title}</a>
-            <div class="news-meta">${story.score} points • by ${story.by} • ${domain}</div>
-          `;
-          newsFeed.appendChild(div);
-        });
+        if (data.status === 'ok') {
+          const items = data.items.slice(0, 10);
+          newsFeed.innerHTML = '';
+          items.forEach(story => {
+            const div = document.createElement('div');
+            div.className = 'news-item';
+            let domain = 'Feed';
+            try { domain = new URL(story.link).hostname.replace('www.', ''); } catch (e) { }
+            div.innerHTML = `
+              <a href="${story.link}" target="_blank" rel="noopener">${story.title}</a>
+              <div class="news-meta">🔗 ${domain}</div>
+            `;
+            newsFeed.appendChild(div);
+          });
+        } else {
+          throw new Error("Failed to parse RSS feed.");
+        }
       } catch (e) {
         console.error("News fetch error:", e);
-        newsFeed.innerHTML = '<div style="text-align:center; padding: 20px; color:#ff5555;">Could not load news. Check connection.</div>';
+        newsFeed.innerHTML = `<div style="text-align:center; padding: 20px; color:#ff5555;">${t('feedError')}</div>`;
       }
     }
     fetchNews();
@@ -1547,7 +2088,7 @@
         card.innerHTML = `
           <span>${task.text}</span>
           <div style="display:flex; align-items:center; gap:8px;">
-            ${task.estimated ? `<span style="font-size:0.8rem; opacity:0.7; color:#FFD700;">(${task.actual || 0}/${task.estimated} 🥟)</span>` : ''}
+            ${task.estimated ? `<span style="font-size:0.8rem; opacity:0.7; color:#FFD700; display: inline-flex; align-items: center; gap: 4px;">(${task.actual || 0}/${task.estimated} <img src="logo.png" style="width: 12px; height: 12px; filter: drop-shadow(0 0 2px rgba(255,215,0,0.5));">)</span>` : ''}
             <span class="delete-task" onclick="deleteTask('${task.id}')">&times;</span>
           </div>
         `;
@@ -1678,9 +2219,184 @@
       }
     }
 
-    // Initialize Kanban
-    renderTasks();
+    // --- Viral IG Export ---
+    async function generateStoryImage() {
+      const template = document.getElementById('story-template');
+      const userNameElem = document.getElementById('story-user-name');
+      const khinkaliPlateElem = document.getElementById('story-khinkali-plate');
 
+      const originalShareBtn = document.querySelector('button[onclick="generateStoryImage()"]');
+      const originalBtnText = originalShareBtn.innerHTML;
+      originalShareBtn.innerHTML = t('storyLoading');
+      originalShareBtn.disabled = true;
+
+      try {
+        // Update dynamic data
+        const currentName = localStorage.getItem('khinkaliUserName') || t('guest');
+        userNameElem.textContent = "🧑‍🍳 " + currentName;
+
+        // Update count
+        let stats = JSON.parse(localStorage.getItem('khinkaliStats')) || { dailyCount: 0, highestStreak: 0, lastCookedDate: null };
+        khinkaliPlateElem.innerHTML = ''; // Clear previous emojis
+
+        // Ensure at least 1 icon shows if dailyCount is 0 to match the previous design
+        const count = Math.max(1, Math.min(stats.dailyCount || 0, 15));
+
+        // Give the plate a flex layout for wrapping
+        khinkaliPlateElem.style.display = 'flex';
+        khinkaliPlateElem.style.flexWrap = 'wrap';
+        khinkaliPlateElem.style.justifyContent = 'center';
+        khinkaliPlateElem.style.gap = '20px';
+        khinkaliPlateElem.style.maxWidth = '800px';
+
+        for (let i = 0; i < count; i++) {
+          const img = document.createElement('img');
+          img.src = 'logo.png';
+          img.style.width = '120px';
+          img.style.height = '120px';
+          img.style.filter = 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.4))';
+          khinkaliPlateElem.appendChild(img);
+        }
+
+        // Temporarily make visible for rendering (keep it offscreen via z-index or absolute position which is already set)
+        template.style.display = 'flex';
+
+        // Wait a small tick to ensure DOM paints the flex layout
+        await new Promise(res => setTimeout(res, 50));
+
+        const canvas = await html2canvas(template, {
+          scale: 2,
+          backgroundColor: '#0f0c29',
+          useCORS: true
+        });
+
+        const link = document.createElement('a');
+        link.download = `khinkali_story_${new Date().toISOString().split('T')[0]}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (e) {
+        console.error("Canvas export failed", e);
+        alert(t('storyFail'));
+      } finally {
+        // Hide again
+        template.style.display = 'none';
+        originalShareBtn.innerHTML = originalBtnText;
+        originalShareBtn.disabled = false;
+      }
+    }
+
+    // Initialize Dashboard
+    updateLanguageDOM();
+
+  </script>
+
+  <script>
+    // --- Google Calendar Integration ---
+    // The Application's Google Client ID. 
+    // The owner must configure this once.
+    const GOOGLE_CLIENT_ID = "50306642692-2gsp25nca2oug8qb3r948qsfpdjvibam.apps.googleusercontent.com";
+
+    let tokenClient;
+
+    function initGoogleClient() {
+      if (typeof google === 'undefined') {
+        alert("Google Identity Services failed to load.");
+        return;
+      }
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/calendar.readonly',
+        prompt: 'consent',
+        callback: async (response) => {
+          if (response.error !== undefined) {
+            console.error("Token error:", response);
+            alert(t('googleError'));
+            return;
+          }
+          await fetchUpcomingEvents(response.access_token);
+        },
+      });
+    }
+
+    function handleGoogleConnect() {
+      if (!GOOGLE_CLIENT_ID) {
+        alert("Developer Error: Google Client ID is not configured in the application source code.");
+        return;
+      }
+
+      initGoogleClient();
+
+      if (tokenClient) {
+        tokenClient.requestAccessToken();
+      }
+    }
+
+    async function fetchUpcomingEvents(token) {
+      try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(today);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${today.toISOString()}&timeMax=${endOfDay.toISOString()}&singleEvents=true&orderBy=startTime`;
+
+        const response = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("API Fetch failed with status " + response.status);
+        }
+
+        const data = await response.json();
+        const events = data.items || [];
+
+        console.log("Calendar Sync: Successfully fetched events ->", events);
+
+        if (events.length === 0) {
+          alert("Calendar Sync: You have no upcoming events scheduled for today!");
+          return;
+        }
+
+        let newEventsAdded = 0;
+        events.forEach(event => {
+          const title = event.summary || "Busy";
+          let timeStr = "";
+          if (event.start && event.start.dateTime) {
+            const startDate = new Date(event.start.dateTime);
+            timeStr = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " - ";
+          }
+          const taskText = `${t('eventTag')} ${timeStr}${title}`;
+
+          if (!tasks.some(t => t.text === taskText)) {
+            tasks.push({
+              id: 'ev_' + Date.now() + Math.random().toString(36).substring(2, 9),
+              text: taskText,
+              status: 'todo',
+              estimated: 1,
+              actual: 0
+            });
+            newEventsAdded++;
+          }
+        });
+
+        if (newEventsAdded > 0) {
+          saveTasks();
+
+          const btn = document.getElementById('googleConnectBtn');
+          if (btn) {
+            btn.setAttribute('data-i18n', 'googleSync');
+            btn.innerHTML = t('googleSync');
+            btn.style.background = 'rgba(76, 175, 80, 0.4)';
+          }
+        }
+      } catch (e) {
+        console.error("Calendar fetch error:", e);
+        alert(t('googleError'));
+      }
+    }
   </script>
 
   <audio id="alarm-sound">

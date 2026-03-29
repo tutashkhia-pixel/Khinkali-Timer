@@ -1321,8 +1321,9 @@
       }
     };
 
-    let currentLang = localStorage.getItem('khinkaliLang') || 'ka';
-
+    // Detect browser language but default heavily to English
+    const browserLang = (navigator.language || navigator.userLanguage || "en").startsWith("ka") ? "ka" : "en";
+    let currentLang = localStorage.getItem('khinkaliLang') || browserLang;
     // Helper translation accessor
     function t(key) {
       return translations[currentLang][key] || key;

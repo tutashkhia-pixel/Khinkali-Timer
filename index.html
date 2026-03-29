@@ -1153,9 +1153,9 @@
   </div>
   <!-- Zen Navigation Bar -->
   <nav class="zen-nav" id="zenNav">
-    <button id="nav-news" onclick="toggleZenPanel('news')" data-i18n="zenFeed">📰 Feed</button>
-    <button id="nav-tasks" onclick="toggleZenPanel('tasks')" data-i18n="zenTasks">✅ Tasks</button>
-    <button id="nav-atmosphere" onclick="toggleZenPanel('atmosphere')" data-i18n="zenAtmo">🎧 Atmosphere</button>
+    <button id="nav-news" onclick="toggleZenPanel('news')" title="Tech Feed" style="font-size: 1.5rem; padding: 10px 15px; background: transparent; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">📰</button>
+    <button id="nav-tasks" onclick="toggleZenPanel('tasks')" title="Tasks" style="font-size: 1.5rem; padding: 10px 15px; background: transparent; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">✅</button>
+    <button id="nav-atmosphere" onclick="toggleZenPanel('atmosphere')" title="Atmosphere" style="font-size: 1.5rem; padding: 10px 15px; background: transparent; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">🎧</button>
   </nav>
 
   <!-- Atmosphere Popover -->
@@ -1186,9 +1186,14 @@
     მალე: აქციე შენი ფოკუსი სიკეთედ • <a href="https://sikete.ge" target="_blank"
       style="color: var(--accent-color); text-decoration: none; font-weight: bold;">Sikete.ge</a>
   </div>
-  <div class="footer">
-    <small style="opacity: 0.5;">Khinkali Dash v1000</small>
-  </div>
+  <footer class="legal-footer" style="text-align: center; padding: 20px; padding-bottom: 40px; font-size: 0.85rem; color: rgba(255,255,255,0.6); display: flex; flex-direction: column; gap: 8px;">
+    <div>
+      <a href="./privacy.html" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4); margin: 0 10px;">Privacy Policy</a> |
+      <a href="./terms.html" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4); margin: 0 10px;">Terms of Service</a> |
+      <span style="margin: 0 10px;">Contact: <a href="mailto:hello@techedgelabs.com" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4);">hello@techedgelabs.com</a></span>
+    </div>
+    <small style="opacity: 0.5;" data-i18n="footerText">Khinkali Dash v2.0 &copy; 2026 TechEdge Labs LLC</small>
+  </footer>
 
   <script>
     // --- Internationalization (i18n) Engine ---
@@ -1233,7 +1238,7 @@
         zenAtmo: "🎧 Atmosphere",
         storyTitle: "MY HARVEST TODAY",
         footerText: "Khinkali Dash v2000",
-        welcomeGreeting: "Hello.",
+        welcomeGreeting: "Hello,",
         namePlaceholder: "What is your name?",
         statusReady: "Ready to start?",
         statusFocusing: "Khinkali is boiling...",
@@ -1296,9 +1301,9 @@
         zenAtmo: "🎧 ატმოსფერო",
         storyTitle: "ჩემი დღევანდელი მოსავალი",
         footerText: "Khinkali Dash v2000",
-        welcomeGreeting: "გამარჯობა.",
+        welcomeGreeting: "გამარჯობა,",
         namePlaceholder: "რა გქვია?",
-        statusReady: "დავიწყოთ?",
+        statusReady: "შევუდგეთ?",
         statusFocusing: "ხინკალი იხარშება...",
         statusPaused: "⏸ პაუზა",
         statusPausedRestored: "⏸ პაუზა (აღდგენილი)",
@@ -1927,9 +1932,13 @@
       greetingElement.style.marginBottom = "1rem";
 
       if (savedName) {
-        greetingElement.innerHTML = `${t('welcomeGreeting')} <span style="font-family: 'Noto Sans Georgian', 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; color: #a0e7e5;">${savedName}</span>.`;
+        // [Name], რას ვამზადებთ დღეს? (Or strictly what the user asked)
+        const currentLang = localStorage.getItem('khinkaliLang') || 'ka';
+        const phrase = currentLang === 'ka' ? "რას ვამზადებთ დღეს?" : "what are we cooking today?";
+        greetingElement.innerHTML = `<span style="font-family: 'Noto Sans Georgian', 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; color: #a0e7e5;">${savedName}</span>, ${phrase}`;
       } else {
-        greetingElement.innerHTML = `${t('welcomeGreeting')}<br><div style="display:flex; justify-content:center; align-items:flex-end; gap:10px;"><input type="text" id="nameInput" placeholder="${t('namePlaceholder')}" style="background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; max-width: 250px; width:100%; text-align:center; font-family: inherit; font-size: 2.2rem; outline:none; margin-top: 10px; padding-bottom: 5px;" autocomplete="off" onkeypress="if(event.key === 'Enter') saveName(this.value)" onblur="setTimeout(() => saveName(document.getElementById('nameInput').value), 200)"><button onclick="saveName(document.getElementById('nameInput').value)" style="background:var(--accent-color); color:var(--bg-color); border:none; border-radius:50%; width:40px; height:40px; min-width:40px; font-size:1.4rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-bottom:5px;">✓</button></div>`;
+        // გამარჯობა, რა გქვია?
+        greetingElement.innerHTML = `${t('welcomeGreeting')} ${t('namePlaceholder')}<br><div style="display:flex; justify-content:center; align-items:flex-end; gap:10px;"><input type="text" id="nameInput" placeholder="${t('namePlaceholder')}" style="background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; max-width: 250px; width:100%; text-align:center; font-family: inherit; font-size: 2.2rem; outline:none; margin-top: 10px; padding-bottom: 5px;" autocomplete="off" onkeypress="if(event.key === 'Enter') saveName(this.value)" onblur="setTimeout(() => saveName(document.getElementById('nameInput').value), 200)"><button onclick="saveName(document.getElementById('nameInput').value)" style="background:var(--accent-color); color:var(--bg-color); border:none; border-radius:50%; width:40px; height:40px; min-width:40px; font-size:1.4rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-bottom:5px;">✓</button></div>`;
       }
     }
 

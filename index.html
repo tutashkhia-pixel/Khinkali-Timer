@@ -2306,7 +2306,7 @@
       tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: GOOGLE_CLIENT_ID,
         scope: 'https://www.googleapis.com/auth/calendar.readonly',
-        prompt: 'consent',
+        prompt: '', // Allow seamless login for returning users without re-consent
         callback: async (response) => {
           if (response.error !== undefined) {
             console.error("Token error:", response);

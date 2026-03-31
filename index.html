@@ -1326,9 +1326,42 @@
       }
     };
 
-    // Detect browser language but default heavily to English
-    const browserLang = (navigator.language || navigator.userLanguage || "en").startsWith("ka") ? "ka" : "en";
-    let currentLang = localStorage.getItem('khinkaliLang') || browserLang;
+    // Language: manual preference wins; otherwise geo-detect; fallback to English
+    let currentLang = localStorage.getItem('khinkaliLang') || 'en';
+
+    // Geo-detect on first visit (or after cache expires), only if no manual preference set
+    (function detectGeoLanguage() {
+      if (localStorage.getItem('khinkaliLang')) return; // user already chose manually
+
+      const cached = localStorage.getItem('khinkaliGeoLang');
+      const cacheAge = Date.now() - parseInt(localStorage.getItem('khinkaliGeoTime') || '0');
+      const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
+
+      if (cached && cacheAge < ONE_WEEK) {
+        if (cached !== currentLang) {
+          currentLang = cached;
+          // DOM not ready yet — updateLanguageDOM() will be called at end of script init
+        }
+        return;
+      }
+
+      // Use Cloudflare's trace endpoint — free, no API key, no rate limits
+      fetch('https://www.cloudflare.com/cdn-cgi/trace')
+        .then(r => r.text())
+        .then(text => {
+          const match = text.match(/loc=([A-Z]{2})/);
+          const country = match ? match[1] : '';
+          const detected = country === 'GE' ? 'ka' : 'en';
+          localStorage.setItem('khinkaliGeoLang', detected);
+          localStorage.setItem('khinkaliGeoTime', String(Date.now()));
+          if (!localStorage.getItem('khinkaliLang') && detected !== currentLang) {
+            currentLang = detected;
+            updateLanguageDOM(); // Re-render now that we know the country
+          }
+        })
+        .catch(() => {}); // Stay in English on network failure
+    })();
+
     // Helper translation accessor
     function t(key) {
       return translations[currentLang][key] || key;
@@ -1336,7 +1369,7 @@
 
     function toggleLanguage() {
       currentLang = currentLang === 'en' ? 'ka' : 'en';
-      localStorage.setItem('khinkaliLang', currentLang);
+      localStorage.setItem('khinkaliLang', currentLang); // Marks as manual choice
       alarmAudio.src = currentLang === 'ka' ? 'alarm_ka.mp3' : 'alarm_en.mp3';
       updateLanguageDOM();
     }
@@ -1934,7 +1967,6 @@
 
       if (savedName) {
         // [Name], რას ვამზადებთ დღეს? (Or strictly what the user asked)
-        const currentLang = localStorage.getItem('khinkaliLang') || 'ka';
         const phrase = currentLang === 'ka' ? "რას ვამზადებთ დღეს?" : "what are we cooking today?";
         greetingElement.innerHTML = `<span style="font-family: 'Noto Sans Georgian', 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; color: #a0e7e5;">${savedName}</span>, ${phrase}`;
       } else {

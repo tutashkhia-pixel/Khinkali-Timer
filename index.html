@@ -1968,7 +1968,7 @@
       if (savedName) {
         // [Name], რას ვამზადებთ დღეს? (Or strictly what the user asked)
         const phrase = currentLang === 'ka' ? "რას ვამზადებთ დღეს?" : "what are we cooking today?";
-        greetingElement.innerHTML = `<span style="font-family: 'Noto Sans Georgian', 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; color: #a0e7e5;">${savedName}</span>, ${phrase}`;
+        greetingElement.innerHTML = `<span style="font-family: 'Noto Sans Georgian', 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; color: #a0e7e5;">${savedName}</span>, ${phrase} <button onclick="clearName()" title="Change name" style="background:transparent; border:none; color:rgba(255,255,255,0.3); font-size:0.9rem; cursor:pointer; padding:0 4px; vertical-align:middle; transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">✏️</button>`;
       } else {
         // გამარჯობა, რა გქვია?
         greetingElement.innerHTML = `${t('welcomeGreeting')} ${t('namePlaceholder')}<br><div style="display:flex; justify-content:center; align-items:flex-end; gap:10px;"><input type="text" id="nameInput" placeholder="${t('namePlaceholder')}" style="background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; max-width: 250px; width:100%; text-align:center; font-family: inherit; font-size: 2.2rem; outline:none; margin-top: 10px; padding-bottom: 5px;" autocomplete="off" onkeypress="if(event.key === 'Enter') saveName(this.value)" onblur="setTimeout(() => saveName(document.getElementById('nameInput').value), 200)"><button onclick="saveName(document.getElementById('nameInput').value)" style="background:var(--accent-color); color:var(--bg-color); border:none; border-radius:50%; width:40px; height:40px; min-width:40px; font-size:1.4rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-bottom:5px;">✓</button></div>`;
@@ -1980,6 +1980,11 @@
         localStorage.setItem('khinkaliUserName', name.trim());
         updateGreeting();
       }
+    }
+
+    function clearName() {
+      localStorage.removeItem('khinkaliUserName');
+      updateGreeting();
     }
 
     updateGreeting();

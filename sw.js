@@ -1,4 +1,4 @@
-const CACHE_NAME = 'khinkali-dash-v27';
+const CACHE_NAME = 'khinkali-dash-v28';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -7,7 +7,9 @@ const ASSETS_TO_CACHE = [
     './logo.png',
     './favicon.png',
     './alarm_en.mp3',
-    './alarm_ka.mp3'
+    './alarm_ka.mp3',
+    './alarm_es.mp3',
+    './alarm_fr.mp3'
 ];
 
 // Install Event: Cache essential files
@@ -39,9 +41,9 @@ self.addEventListener('activate', (event) => {
 
 // Fetch Event: Serve from Cache, Fallback to Network
 self.addEventListener('fetch', (event) => {
-    // We only want to cache our local assets, not HackerNews API calls
-    if (event.request.url.includes('hacker-news.firebaseio.com')) {
-        return; // Let the browser handle external API requests normally
+    // Only cache local assets; let external API calls (RSS, Google) go to network
+    if (!event.request.url.startsWith(self.location.origin)) {
+        return;
     }
 
     event.respondWith(

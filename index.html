@@ -439,7 +439,7 @@
     }
 
     .khinkali {
-      width: 220px;
+      width: 265px;
       animation: float 4s ease-in-out infinite;
       filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.7));
       opacity: 0.95;
@@ -449,7 +449,7 @@
     .khinkali.cooked {
       filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.9)) brightness(1.2);
       opacity: 1;
-      transform: scale(1.1);
+      transform: scale(1.05);
       animation: none;
     }
 
@@ -1286,9 +1286,9 @@
         kanbanAdd: "დამატება",
         timerPlaceholder: "დრო (მაგ. 25წ, 1სთ30წ, 90წმ)",
         btnStart: "შევუდგეთ",
-        btnPause: "პაუზა",
+        btnPause: "შევისვენოთ",
         btnResume: "გაგრძელება",
-        btnReset: "განულება",
+        btnReset: "თავიდან",
         btnShare: "📸 გააზიარე სთორიში",
         tagWork: "💻 სამუშაო",
         tagStudy: "📚 სწავლა",
@@ -1300,18 +1300,18 @@
         zenTasks: "✅ საქმეები",
         zenAtmo: "🎧 ატმოსფერო",
         storyTitle: "ჩემი დღევანდელი მოსავალი",
-        footerText: "Khinkali Dash v2000",
+        footerText: "Khinkali Dash v2.0",
         welcomeGreeting: "გამარჯობა,",
         namePlaceholder: "რა გქვია?",
         statusReady: "შევუდგეთ?",
         statusFocusing: "ხინკალი იხარშება...",
-        statusPaused: "⏸ პაუზა",
-        statusPausedRestored: "⏸ პაუზა (აღდგენილი)",
+        statusPaused: "⏸ შესვენება",
+        statusPausedRestored: "⏸ შესვენება (აღდგენილი)",
         statusRestored: "⏱ დრო აღდგა ფონიდან!",
         statusFinished: "✅ დრო გავიდა!",
         statusTaskFinished: "✅ გაიშალა სუფრა!",
         timeError: "ჩაწერეთ დრო! (მაგ. 25წ)",
-        alarmStop: "🔇 ხმის გათიშვა",
+        alarmStop: "🔇 ხმა გათიშე",
         rainOn: "🎧 <span style='font-size:14px; margin-left:6px;'>წვიმა</span>",
         rainOff: "🎧",
         feedLoading: "იტვირთება...",
@@ -1337,6 +1337,7 @@
     function toggleLanguage() {
       currentLang = currentLang === 'en' ? 'ka' : 'en';
       localStorage.setItem('khinkaliLang', currentLang);
+      alarmAudio.src = currentLang === 'ka' ? 'alarm_ka.mp3' : 'alarm_en.mp3';
       updateLanguageDOM();
     }
 
@@ -1998,6 +1999,7 @@
 
     function saveCustomFeed() {
       const url = document.getElementById('customFeedUrl').value.trim();
+      try { new URL(url); } catch (_) { alert('Please enter a valid URL.'); return; }
       localStorage.setItem('khinkaliCustomFeed', url);
       alert('Custom feed saved! It will load on next refresh.');
       fetchNews(); // Reload immediately
@@ -2245,12 +2247,11 @@
         const currentName = localStorage.getItem('khinkaliUserName') || t('guest');
         userNameElem.textContent = "🧑‍🍳 " + currentName;
 
-        // Update count
-        let stats = JSON.parse(localStorage.getItem('khinkaliStats')) || { dailyCount: 0, highestStreak: 0, lastCookedDate: null };
+        // Update count using the correct stats key
         khinkaliPlateElem.innerHTML = ''; // Clear previous emojis
 
-        // Ensure at least 1 icon shows if dailyCount is 0 to match the previous design
-        const count = Math.max(1, Math.min(stats.dailyCount || 0, 15));
+        // Ensure at least 1 icon shows if todayKhinkalis is 0
+        const count = Math.max(1, Math.min(userStats.todayKhinkalis || 0, 15));
 
         // Give the plate a flex layout for wrapping
         khinkaliPlateElem.style.display = 'flex';
@@ -2415,7 +2416,7 @@
   <script>
     const alarmAudio = document.getElementById("alarm-sound");
     alarmAudio.volume = 1.0;
-    alarmAudio.src = 'alarm_ka.mp3';
+    alarmAudio.src = currentLang === 'ka' ? 'alarm_ka.mp3' : 'alarm_en.mp3';
 
     // --- PWA Service Worker Registration ---
     if ('serviceWorker' in navigator) {

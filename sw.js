@@ -1,7 +1,9 @@
-const CACHE_NAME = 'khinkali-dash-v28';
+const CACHE_NAME = 'khinkali-dash-v29';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
+    './terms.html',
+    './privacy.html',
     './manifest.json',
     './timerWorker.js',
     './logo.png',

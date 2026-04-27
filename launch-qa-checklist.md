@@ -5,7 +5,7 @@ Use this checklist for local and production release smoke testing.
 ## Test Targets
 
 - Local: `http://127.0.0.1:4173/index.html`
-- Production: `https://tutashkhia-pixel.github.io/Khinkali-Timer/`
+- Production: `https://khinkali-dash.netlify.app/`
 
 ## Launch Blockers
 

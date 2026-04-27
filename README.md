@@ -16,7 +16,7 @@ Khinkali Timer is a Georgian khinkali-themed focus dashboard for timed work sess
 
 ## Live Demo
 
-[Try Khinkali Timer on GitHub Pages](https://tutashkhia-pixel.github.io/Khinkali-Timer)
+[Try Khinkali Timer on Netlify](https://khinkali-dash.netlify.app/)
 
 ## Run Locally
 
@@ -61,11 +61,12 @@ To test it:
 
 The extension listens for timer state messages from the dashboard and redirects configured distracting sites while focus mode is running.
 
-## Deploy with GitHub Pages
+## Deploy with Netlify
 
-1. Go to repository Settings -> Pages.
-2. Set the source to the `main` branch and root folder.
-3. The site will be available at `https://tutashkhia-pixel.github.io/Khinkali-Timer`.
+1. Connect the GitHub repository to Netlify.
+2. Use the repository root as the publish directory.
+3. No build command is required for the static app.
+4. The canonical production URL is `https://khinkali-dash.netlify.app/`.
 
 ## Launch QA
 

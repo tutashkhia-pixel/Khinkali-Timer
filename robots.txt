@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tutashkhia-pixel.github.io/Khinkali-Timer/sitemap.xml
+Sitemap: https://khinkali-dash.netlify.app/sitemap.xml

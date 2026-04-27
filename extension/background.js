@@ -11,7 +11,7 @@ const BLOCKED_DOMAINS = [
 ];
 
 // Where to redirect if someone tries to visit a blocked site while focusing
-const REDIRECT_URL = "https://tutashkhia-pixel.github.io/Khinkali-Timer/";
+const REDIRECT_URL = "https://khinkali-dash.netlify.app/";
 
 // 1. Listen for state updates from the Khinkali dashboard content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

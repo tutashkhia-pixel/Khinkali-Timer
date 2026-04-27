@@ -17,7 +17,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Khinkali Dash">
   <meta property="og:description" content="The ultimate focus workspace and timer. Cook your tasks, build your table, and join the global Georgian diaspora.">
-  <meta property="og:image" content="https://tutashkhia-pixel.github.io/Khinkali-Timer/logo.png">
+  <meta property="og:image" content="https://khinkali-dash.netlify.app/logo.png">
   <meta name="twitter:card" content="summary_large_image">
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap"
@@ -73,22 +73,45 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 1rem;
       background: transparent;
       z-index: 10;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .top-bar h2 {
+      flex: 0 0 auto;
       font-size: 1.4rem;
       font-family: 'Noto Sans Georgian', 'Inter', sans-serif;
       font-weight: 700;
       color: rgba(255, 255, 255, 0.8);
       letter-spacing: 2px;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .top-bar .date-display {
+      max-width: min(34vw, 360px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-size: 1.1rem;
       color: rgba(255, 255, 255, 0.7);
+    }
+
+    .top-bar-meta {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    #statsContainer {
+      flex: 0 0 auto;
     }
 
     .dashboard {
@@ -390,6 +413,8 @@
     }
 
     .greeting {
+      width: 100%;
+      text-align: center;
       font-size: 3.5rem;
       font-weight: 300;
       margin-bottom: 0.5rem;
@@ -892,6 +917,10 @@
         padding: 1rem;
       }
 
+      .top-bar .date-display {
+        display: none;
+      }
+
       .timer-panel {
         order: 1;
       }
@@ -917,10 +946,20 @@
 
       .top-bar h2 {
         font-size: 1rem;
+        letter-spacing: 1px;
       }
 
       .top-bar .date-display {
         font-size: 0.9rem;
+      }
+
+      .top-bar-meta {
+        gap: 10px;
+      }
+
+      #statsContainer {
+        font-size: 0.9rem !important;
+        gap: 8px !important;
       }
 
       .khinkali {
@@ -969,7 +1008,7 @@
 
   <div class="top-bar">
     <h2 data-i18n="appTitle">Khinkali Dash</h2>
-    <div style="display: flex; gap: 20px; align-items: center;">
+    <div class="top-bar-meta">
       <!-- Gamification Stats -->
       <div id="statsContainer"
         style="display: flex; gap: 15px; font-weight: 500; font-size: 1.1rem; opacity: 0.9; align-items: center;">
@@ -2052,14 +2091,14 @@
         greetingElement.appendChild(document.createElement('br'));
 
         const inputWrap = document.createElement('div');
-        inputWrap.style.cssText = 'display:flex; justify-content:center; align-items:flex-end; gap:10px;';
+        inputWrap.style.cssText = 'display:flex; justify-content:center; align-items:flex-end; gap:10px; width:min(100%, 520px); max-width:520px; margin: 0 auto;';
 
         const input = document.createElement('input');
         input.type = 'text';
         input.id = 'nameInput';
         input.placeholder = t('namePlaceholder');
         input.autocomplete = 'off';
-        input.style.cssText = 'background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; max-width: 250px; width:100%; text-align:center; font-family: inherit; font-size: 2.2rem; outline:none; margin-top: 10px; padding-bottom: 5px;';
+        input.style.cssText = 'background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; min-width: 0; width:100%; flex: 1 1 auto; text-align:center; font-family: inherit; font-size: clamp(1.4rem, 4vw, 2.2rem); outline:none; margin-top: 10px; padding-bottom: 5px;';
         input.addEventListener('keypress', (event) => {
           if (event.key === 'Enter') saveName(input.value);
         });
@@ -2069,7 +2108,7 @@
 
         const saveButton = document.createElement('button');
         saveButton.type = 'button';
-        saveButton.style.cssText = 'background:var(--accent-color); color:var(--bg-color); border:none; border-radius:50%; width:40px; height:40px; min-width:40px; font-size:1.4rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-bottom:5px;';
+        saveButton.style.cssText = 'background:var(--accent-color); color:var(--bg-color); border:none; border-radius:50%; width:40px; height:40px; min-width:40px; flex:0 0 40px; font-size:1.4rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-bottom:5px;';
         saveButton.textContent = '✓';
         saveButton.addEventListener('click', () => saveName(input.value));
 

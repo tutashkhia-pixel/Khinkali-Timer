@@ -405,6 +405,17 @@
       margin: 1.5rem auto 2rem auto;
     }
 
+    .khinkali-container.cooking::before {
+      content: "";
+      position: absolute;
+      inset: 18% 2% 8%;
+      background: radial-gradient(circle, rgba(255, 196, 87, 0.24), rgba(160, 231, 229, 0.12) 42%, transparent 68%);
+      border-radius: 50%;
+      filter: blur(18px);
+      animation: heatGlow 1.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
     .khinkali {
       width: 265px;
       animation: float 4s ease-in-out infinite;
@@ -414,8 +425,8 @@
     }
 
     .khinkali.boiling {
-      animation: boilBounce 0.9s ease-in-out infinite;
-      filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 24px rgba(160, 231, 229, 0.25));
+      animation: boilBounce 0.72s cubic-bezier(0.2, 0.9, 0.28, 1.25) infinite;
+      filter: drop-shadow(0 20px 42px rgba(0, 0, 0, 0.78)) drop-shadow(0 0 28px rgba(160, 231, 229, 0.42)) brightness(1.06);
       opacity: 1;
     }
 
@@ -428,30 +439,44 @@
 
     .steam {
       position: absolute;
-      top: -30px;
+      top: -12px;
       left: 50%;
-      width: 15px;
-      height: 15px;
-      background: rgba(255, 255, 255, 0.4);
+      width: var(--steam-size, 18px);
+      height: calc(var(--steam-size, 18px) * 1.45);
+      background: rgba(255, 255, 255, 0.56);
       border-radius: 50%;
-      filter: blur(6px);
+      filter: blur(7px);
       transform: translateX(-50%);
-      animation: steamRise 3s ease-out forwards;
+      animation: steamRise var(--steam-duration, 2.6s) ease-out forwards;
       pointer-events: none;
+      z-index: 0;
+    }
+
+    .steam::after {
+      content: "";
+      position: absolute;
+      inset: 22% -35%;
+      background: rgba(160, 231, 229, 0.28);
+      border-radius: 999px;
+      filter: blur(5px);
     }
 
     @keyframes steamRise {
       0% {
-        transform: translateX(-50%) translateY(0) scaleX(1);
+        transform: translateX(-50%) translateY(8px) translateX(0) scale(0.7, 0.8) rotate(0deg);
         opacity: 0;
       }
 
-      40% {
+      18% {
+        opacity: 0.72;
+      }
+
+      58% {
         opacity: 0.5;
       }
 
       100% {
-        transform: translateX(-50%) translateY(-35px) scaleX(1.5);
+        transform: translateX(-50%) translateY(-92px) translateX(var(--steam-drift, 18px)) scale(1.8, 2.35) rotate(var(--steam-rotate, 12deg));
         opacity: 0;
       }
     }
@@ -460,15 +485,37 @@
 
       0%,
       100% {
-        transform: translateY(0) rotate(-1deg) scale(1);
+        transform: translateY(0) rotate(-2deg) scale(1);
       }
 
-      35% {
-        transform: translateY(-10px) rotate(2deg) scale(1.035);
+      18% {
+        transform: translateY(-16px) rotate(3deg) scale(1.055);
       }
 
-      65% {
-        transform: translateY(-4px) rotate(-2deg) scale(1.015);
+      38% {
+        transform: translateY(-4px) rotate(-3deg) scale(1.02);
+      }
+
+      62% {
+        transform: translateY(-12px) rotate(2deg) scale(1.045);
+      }
+
+      82% {
+        transform: translateY(-2px) rotate(-1deg) scale(1.01);
+      }
+    }
+
+    @keyframes heatGlow {
+
+      0%,
+      100% {
+        opacity: 0.42;
+        transform: scale(0.92);
+      }
+
+      50% {
+        opacity: 0.82;
+        transform: scale(1.08);
       }
     }
 
@@ -1716,24 +1763,33 @@
       const container = document.getElementById('khinkaliContainer');
       const steam = document.createElement('div');
       steam.className = 'steam';
-      steam.style.left = 40 + Math.random() * 20 + '%';
+      steam.style.left = 34 + Math.random() * 32 + '%';
+      steam.style.setProperty('--steam-size', `${14 + Math.random() * 18}px`);
+      steam.style.setProperty('--steam-drift', `${-34 + Math.random() * 68}px`);
+      steam.style.setProperty('--steam-rotate', `${-18 + Math.random() * 36}deg`);
+      steam.style.setProperty('--steam-duration', `${2.1 + Math.random() * 0.9}s`);
       container.appendChild(steam);
       setTimeout(() => steam.remove(), 3000);
     }
 
     function startKhinkaliCooking() {
       const khinkaliIcon = document.getElementById('khinkaliIcon');
+      const khinkaliContainer = document.getElementById('khinkaliContainer');
       khinkaliIcon.classList.remove('cooked');
       khinkaliIcon.classList.add('boiling');
+      khinkaliContainer.classList.add('cooking');
       clearInterval(steamInterval);
-      spawnSteam();
-      steamInterval = setInterval(spawnSteam, 600);
+      for (let i = 0; i < 4; i += 1) {
+        setTimeout(spawnSteam, i * 120);
+      }
+      steamInterval = setInterval(spawnSteam, 360);
     }
 
     function stopKhinkaliCooking() {
       clearInterval(steamInterval);
       steamInterval = null;
       document.getElementById('khinkaliIcon').classList.remove('boiling');
+      document.getElementById('khinkaliContainer').classList.remove('cooking');
     }
 
     function finishTimer() {

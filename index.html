@@ -77,7 +77,7 @@
       z-index: 10;
       width: 100%;
       min-width: 0;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .top-bar h2 {
@@ -119,12 +119,13 @@
       gap: 3rem;
       padding: 1.5rem 2rem;
       flex: 1;
-      height: calc(100vh - 70px);
+      min-height: calc(100svh - 210px);
       transition: all 0.3s ease;
       position: relative;
     }
 
-    .dashboard.focus-mode-active .zen-nav {
+    .dashboard.focus-mode-active ~ .zen-nav,
+    .dashboard.focus-mode-active ~ .atmosphere-popover {
       opacity: 0;
       pointer-events: none;
     }
@@ -275,6 +276,7 @@
       font-family: 'Noto Sans Georgian', 'Inter', sans-serif;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      flex: none;
     }
 
     .zen-nav button:hover {
@@ -334,7 +336,7 @@
     .timer-panel {
       text-align: center;
       justify-content: flex-start;
-      padding-top: 2rem;
+      padding-top: 1rem;
       align-items: center;
       background: transparent;
       border: none;
@@ -574,7 +576,7 @@
     }
 
     .timer-controls {
-      margin-top: 2rem;
+      margin-top: 1.25rem;
       width: 100%;
       max-width: 400px;
     }
@@ -648,8 +650,29 @@
       transform: scale(1.05);
     }
 
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+      transform: none;
+    }
+
+    button:disabled:hover {
+      background-color: var(--accent-color);
+      transform: none;
+    }
+
     button:active {
       transform: scale(0.95);
+    }
+
+    .primary-action {
+      background: linear-gradient(135deg, #a855f7, #7c3aed);
+      box-shadow: 0 10px 24px rgba(168, 85, 247, 0.28);
+      font-weight: 700;
+    }
+
+    .primary-action:hover {
+      background: linear-gradient(135deg, #b66cff, #8b4cf6);
     }
 
     .tag-group {
@@ -875,7 +898,19 @@
 
     /* Footer */
     .legal-footer {
-      margin-bottom: calc(96px + env(safe-area-inset-bottom));
+      margin-bottom: calc(80px + env(safe-area-inset-bottom));
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+    }
+
+    .footer-separator {
+      opacity: 0.55;
     }
 
     .footer {
@@ -903,7 +938,7 @@
     @media (max-width: 900px) {
       .dashboard {
         grid-template-columns: 1fr;
-        height: auto;
+        min-height: auto;
         overflow-y: auto;
         gap: 1.5rem;
         padding: 1rem;
@@ -948,7 +983,7 @@
         transform: none;
         width: max-content;
         max-width: calc(100% - 32px);
-        margin: 24px auto 18px;
+        margin: 18px auto 16px;
       }
 
       .legal-footer {
@@ -993,6 +1028,10 @@
         gap: 8px !important;
       }
 
+      #fireStreak {
+        display: none !important;
+      }
+
       .khinkali {
         width: 80px;
         margin-bottom: 0.5rem;
@@ -1026,6 +1065,16 @@
         font-size: 0.9rem;
       }
 
+      .zen-nav {
+        gap: 6px;
+        padding: 7px 9px;
+      }
+
+      .zen-nav button {
+        padding: 9px 12px;
+        font-size: 0.82rem;
+      }
+
       .tag-btn {
         padding: 4px 10px;
         font-size: 12px;
@@ -1039,6 +1088,10 @@
 
       .atmosphere-popover {
         bottom: 110px;
+      }
+
+      .footer-links {
+        gap: 6px 10px;
       }
     }
   </style>
@@ -1107,9 +1160,9 @@
         <input id="timeInput" value="25m" placeholder="დრო (მაგ. 25წ, 1სთ30წ, 90წმ)" data-i18n="timerPlaceholder"
           onfocus="this.placeholder = ''" onblur="this.placeholder = t('timerPlaceholder')" autocomplete="off" />
         <div class="button-group">
-          <button onclick="startTimer()" data-i18n="btnStart">შევუდგეთ</button>
-          <button id="pauseBtn" onclick="togglePause()" data-i18n="btnPause">პაუზა</button>
-          <button onclick="resetTimer()" data-i18n="btnReset">განულება</button>
+          <button id="startBtn" class="primary-action" onclick="startTimer()" data-i18n="btnStart">შევუდგეთ</button>
+          <button id="pauseBtn" onclick="togglePause()" data-i18n="btnPause" disabled>პაუზა</button>
+          <button id="resetBtn" onclick="resetTimer()" data-i18n="btnReset" disabled>განულება</button>
         </div>
         <button id="shareStoryBtn" class="story-share-btn" onclick="generateStoryImage()" hidden
           style="margin-top: 15px; width: 100%; background: linear-gradient(135deg, #FF4B2B, #FF416C); font-weight: bold; padding: 14px; border-radius: 12px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s, box-shadow 0.2s;"
@@ -1138,7 +1191,8 @@
 
       <button id="stopAlarmBtn" onclick="stopAlarmSound()"
         style="display:none; width:100%; margin-top:10px; background:transparent; border: 1px solid rgba(255,85,85,0.4); color: #ff5555; padding: 12px; border-radius: 12px; transition: all 0.2s;"
-        onmouseover="this.style.background='rgba(255,85,85,0.1)'" onmouseout="this.style.background='transparent'">🔇
+        onmouseover="this.style.background='rgba(255,85,85,0.1)'" onmouseout="this.style.background='transparent'"
+        data-i18n="alarmStop">🔇
         ხმის გათიშვა</button>
 
     </div>
@@ -1186,8 +1240,8 @@
   </div>
   <!-- Zen Navigation Bar -->
   <nav class="zen-nav" id="zenNav">
-    <button id="nav-tasks" onclick="toggleZenPanel('tasks')" title="Tasks" style="font-size: 1.5rem; padding: 10px 15px; background: transparent; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">✅</button>
-    <button id="nav-atmosphere" onclick="toggleZenPanel('atmosphere')" title="Atmosphere" style="font-size: 1.5rem; padding: 10px 15px; background: transparent; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">🎧</button>
+    <button id="nav-tasks" onclick="toggleZenPanel('tasks')" title="Tasks" data-i18n="zenTasks">✅ Tasks</button>
+    <button id="nav-atmosphere" onclick="toggleZenPanel('atmosphere')" title="Atmosphere" data-i18n="zenAtmo">🎧 Sound</button>
   </nav>
 
   <!-- Atmosphere Popover -->
@@ -1213,10 +1267,12 @@
   </div>
 
   <footer class="legal-footer" style="text-align: center; padding: 20px; padding-bottom: 40px; font-size: 0.85rem; color: rgba(255,255,255,0.6); display: flex; flex-direction: column; gap: 8px;">
-    <div>
-      <a href="./privacy.html" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4); margin: 0 10px;">Privacy Policy</a> |
-      <a href="./terms.html" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4); margin: 0 10px;">Terms of Service</a> |
-      <span style="margin: 0 10px;">Contact: <a href="mailto:hello@techedgelabs.com" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4);">hello@techedgelabs.com</a></span>
+    <div class="footer-links">
+      <a href="./privacy.html" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4);">Privacy Policy</a>
+      <span class="footer-separator">|</span>
+      <a href="./terms.html" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4);">Terms of Service</a>
+      <span class="footer-separator">|</span>
+      <span>Contact: <a href="mailto:hello@techedgelabs.com" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4);">hello@techedgelabs.com</a></span>
     </div>
     <small style="opacity: 0.5;" data-i18n="footerText">Khinkali Timer v2.0 &copy; 2026 TechEdge Labs LLC</small>
   </footer>
@@ -1251,7 +1307,7 @@
         tagRest: "🧘 Rest",
         focusTimeLabel: "🍽 Time Cooked:",
         zenTasks: "✅ Tasks",
-        zenAtmo: "🎧 Atmosphere",
+        zenAtmo: "🎧 Sound",
         storyTitle: "MY HARVEST TODAY",
         footerText: "Khinkali Timer v2.0",
         welcomeGreeting: "Ready to focus?",
@@ -1300,7 +1356,7 @@
         tagRest: "🧘 დასვენება",
         focusTimeLabel: "🍽 მოხარშული დრო:",
         zenTasks: "✅ საქმეები",
-        zenAtmo: "🎧 ატმოსფერო",
+        zenAtmo: "🎧 ხმა",
         storyTitle: "ჩემი დღევანდელი მოსავალი",
         footerText: "Khinkali Timer v2.0",
         welcomeGreeting: "მზად ხარ ფოკუსისთვის?",
@@ -1523,13 +1579,16 @@
       const displayVal = document.getElementById('dailyFocusVal');
       const tooltip = document.getElementById('focusTooltip');
 
-      const totalH = Math.floor(dailyFocusData.total / 3600);
-      const totalM = Math.floor((dailyFocusData.total % 3600) / 60);
-      if (totalH > 0) {
-        displayVal.textContent = `${totalH}h ${totalM}m`;
-      } else {
-        displayVal.textContent = `${totalM}m`;
+      function formatFocusDuration(totalSeconds) {
+        const safeSeconds = Math.max(0, Math.round(totalSeconds || 0));
+        const h = Math.floor(safeSeconds / 3600);
+        const m = Math.floor((safeSeconds % 3600) / 60);
+        if (h > 0) return `${h}h ${m}m`;
+        if (m > 0) return `${m}m`;
+        return safeSeconds > 0 ? `${safeSeconds}s` : '0m';
       }
+
+      displayVal.textContent = formatFocusDuration(dailyFocusData.total);
 
       // Build Tooltip breakdown
       let tooltipText = "Focus Breakdown:\n";
@@ -1538,10 +1597,7 @@
       for (const [tag, seconds] of Object.entries(dailyFocusData.tags)) {
         if (seconds > 0) {
           hasTags = true;
-          const h = Math.floor(seconds / 3600);
-          const m = Math.floor((seconds % 3600) / 60);
-          const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
-          tooltipText += `${emojis[tag] || '🏷'} ${tag}: ${timeStr}\n`;
+          tooltipText += `${emojis[tag] || '🏷'} ${tag}: ${formatFocusDuration(seconds)}\n`;
         }
       }
       tooltip.textContent = hasTags ? tooltipText.trim() : "No categorized focus data yet.";
@@ -1611,7 +1667,9 @@
 
     const display = document.getElementById("countdown");
     const statusMessage = document.getElementById("statusMessage");
+    const startBtn = document.getElementById("startBtn");
     const pauseBtn = document.getElementById("pauseBtn");
+    const resetBtn = document.getElementById("resetBtn");
     const timeInput = document.getElementById("timeInput");
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1672,6 +1730,16 @@
       } else {
         display.classList.remove('timer-urgent');
       }
+
+      updateTimerControls(calcSeconds);
+    }
+
+    function updateTimerControls(displaySeconds = seconds) {
+      const hasActiveTimer = displaySeconds > 0 || isPaused || targetEndTime > 0;
+      if (startBtn) startBtn.disabled = hasActiveTimer;
+      if (pauseBtn) pauseBtn.disabled = displaySeconds <= 0;
+      if (resetBtn) resetBtn.disabled = !hasActiveTimer;
+      if (startBtn) startBtn.classList.toggle('primary-action', !hasActiveTimer);
     }
 
     function playSound() {
@@ -1774,6 +1842,7 @@
             updateDisplay(seconds);
             pauseBtn.textContent = t('btnResume');
             statusMessage.textContent = t('statusPausedRestored');
+            updateTimerControls(seconds);
           } else {
             // It was running
             const now = Date.now();
@@ -1785,15 +1854,19 @@
               pauseBtn.textContent = t('btnPause');
               statusMessage.textContent = t('statusRestored');
               startKhinkaliCooking();
+              updateTimerControls(seconds);
               timerWorker.postMessage({ command: 'start' });
             } else {
               // Time expired while afk
               addFocusedTime(state.totalDurationSeconds || 0);
               seconds = 0;
+              targetEndTime = 0;
+              isPaused = false;
               updateDisplay(seconds);
               statusMessage.textContent = t('statusFinished');
               checkAndCookKhinkali();
               localStorage.removeItem('khinkaliActiveTimer');
+              updateTimerControls(seconds);
             }
           }
         } catch (e) {
@@ -1843,6 +1916,8 @@
       document.querySelector('.dashboard').classList.remove('focus-mode-active');
       const focusedSeconds = getElapsedFocusSeconds();
       seconds = 0;
+      targetEndTime = 0;
+      isPaused = false;
       updateDisplay(seconds);
       addFocusedTime(focusedSeconds);
       checkAndCookKhinkali(); // Gamification Hook
@@ -1862,6 +1937,7 @@
 
       playSound();
       localStorage.removeItem('khinkaliActiveTimer');
+      updateTimerControls(seconds);
       window.postMessage({ type: "KHINKALI_TIMER", state: "stopped" }, "*");
     }
 
@@ -1917,6 +1993,7 @@
       isPaused = false;
       pauseBtn.textContent = t('btnPause');
       statusMessage.textContent = t('statusFocusing');
+      updateTimerControls(seconds);
 
       if (zenSettings.autoHide) {
         document.querySelector('.dashboard').classList.add('focus-mode-active');
@@ -1940,6 +2017,7 @@
         remainingWhenPaused = targetEndTime - Date.now();
         statusMessage.textContent = t('statusPaused');
         pauseBtn.textContent = t('btnResume');
+        updateTimerControls(seconds);
         playPauseSound();
         window.postMessage({ type: "KHINKALI_TIMER", state: "paused" }, "*");
       } else {
@@ -1949,6 +2027,7 @@
         targetEndTime = Date.now() + remainingWhenPaused;
         statusMessage.textContent = `▶️ ${t('btnResume')}`;
         pauseBtn.textContent = t('btnPause');
+        updateTimerControls(seconds);
         playResumeSound();
         timerWorker.postMessage({ command: 'start' });
         window.postMessage({ type: "KHINKALI_TIMER", state: "running" }, "*");
@@ -1974,6 +2053,7 @@
       isPaused = false;
       pauseBtn.textContent = t('btnPause');
       statusMessage.textContent = t('statusReady');
+      updateTimerControls(seconds);
       stopAlarmSound();
       playResetSound();
       localStorage.removeItem('khinkaliActiveTimer');

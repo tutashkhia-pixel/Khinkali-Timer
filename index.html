@@ -408,11 +408,11 @@
     .khinkali-container.cooking::before {
       content: "";
       position: absolute;
-      inset: 18% 2% 8%;
-      background: radial-gradient(circle, rgba(255, 196, 87, 0.24), rgba(160, 231, 229, 0.12) 42%, transparent 68%);
+      inset: 22% 6% 10%;
+      background: radial-gradient(circle, rgba(255, 196, 87, 0.16), rgba(160, 231, 229, 0.1) 44%, transparent 70%);
       border-radius: 50%;
-      filter: blur(18px);
-      animation: heatGlow 1.4s ease-in-out infinite;
+      filter: blur(20px);
+      animation: heatGlow 2.8s ease-in-out infinite;
       pointer-events: none;
     }
 
@@ -425,8 +425,8 @@
     }
 
     .khinkali.boiling {
-      animation: boilBounce 0.72s cubic-bezier(0.2, 0.9, 0.28, 1.25) infinite;
-      filter: drop-shadow(0 20px 42px rgba(0, 0, 0, 0.78)) drop-shadow(0 0 28px rgba(160, 231, 229, 0.42)) brightness(1.06);
+      animation: simmerFloat 2.15s ease-in-out infinite;
+      filter: drop-shadow(0 18px 38px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 20px rgba(160, 231, 229, 0.28)) brightness(1.03);
       opacity: 1;
     }
 
@@ -439,15 +439,15 @@
 
     .steam {
       position: absolute;
-      top: -12px;
+      top: -18px;
       left: 50%;
-      width: var(--steam-size, 18px);
-      height: calc(var(--steam-size, 18px) * 1.45);
-      background: rgba(255, 255, 255, 0.56);
+      width: var(--steam-size, 16px);
+      height: calc(var(--steam-size, 16px) * 1.6);
+      background: rgba(255, 255, 255, 0.42);
       border-radius: 50%;
-      filter: blur(7px);
-      transform: translateX(-50%);
-      animation: steamRise var(--steam-duration, 2.6s) ease-out forwards;
+      filter: blur(8px);
+      transform: translateX(-50%) translateZ(0);
+      animation: steamRise var(--steam-duration, 3.4s) ease-out forwards;
       pointer-events: none;
       z-index: 0;
     }
@@ -456,52 +456,48 @@
       content: "";
       position: absolute;
       inset: 22% -35%;
-      background: rgba(160, 231, 229, 0.28);
+      background: rgba(160, 231, 229, 0.18);
       border-radius: 999px;
       filter: blur(5px);
     }
 
     @keyframes steamRise {
       0% {
-        transform: translateX(-50%) translateY(8px) translateX(0) scale(0.7, 0.8) rotate(0deg);
+        transform: translateX(-50%) translateY(8px) translateX(0) scale(0.65, 0.8) rotate(0deg);
         opacity: 0;
       }
 
-      18% {
-        opacity: 0.72;
+      22% {
+        opacity: 0.46;
       }
 
-      58% {
-        opacity: 0.5;
+      62% {
+        opacity: 0.32;
       }
 
       100% {
-        transform: translateX(-50%) translateY(-92px) translateX(var(--steam-drift, 18px)) scale(1.8, 2.35) rotate(var(--steam-rotate, 12deg));
+        transform: translateX(-50%) translateY(-78px) translateX(var(--steam-drift, 14px)) scale(1.45, 2.05) rotate(var(--steam-rotate, 10deg));
         opacity: 0;
       }
     }
 
-    @keyframes boilBounce {
+    @keyframes simmerFloat {
 
       0%,
       100% {
-        transform: translateY(0) rotate(-2deg) scale(1);
+        transform: translateY(0) rotate(-0.8deg) scale(1);
       }
 
-      18% {
-        transform: translateY(-16px) rotate(3deg) scale(1.055);
+      28% {
+        transform: translateY(-7px) rotate(1deg) scale(1.018);
       }
 
-      38% {
-        transform: translateY(-4px) rotate(-3deg) scale(1.02);
+      55% {
+        transform: translateY(-2px) rotate(-0.6deg) scale(1.008);
       }
 
-      62% {
-        transform: translateY(-12px) rotate(2deg) scale(1.045);
-      }
-
-      82% {
-        transform: translateY(-2px) rotate(-1deg) scale(1.01);
+      78% {
+        transform: translateY(-5px) rotate(0.7deg) scale(1.012);
       }
     }
 
@@ -509,13 +505,13 @@
 
       0%,
       100% {
-        opacity: 0.42;
-        transform: scale(0.92);
+        opacity: 0.32;
+        transform: scale(0.96);
       }
 
       50% {
-        opacity: 0.82;
-        transform: scale(1.08);
+        opacity: 0.58;
+        transform: scale(1.04);
       }
     }
 
@@ -1763,13 +1759,13 @@
       const container = document.getElementById('khinkaliContainer');
       const steam = document.createElement('div');
       steam.className = 'steam';
-      steam.style.left = 34 + Math.random() * 32 + '%';
-      steam.style.setProperty('--steam-size', `${14 + Math.random() * 18}px`);
-      steam.style.setProperty('--steam-drift', `${-34 + Math.random() * 68}px`);
-      steam.style.setProperty('--steam-rotate', `${-18 + Math.random() * 36}deg`);
-      steam.style.setProperty('--steam-duration', `${2.1 + Math.random() * 0.9}s`);
+      steam.style.left = 38 + Math.random() * 24 + '%';
+      steam.style.setProperty('--steam-size', `${12 + Math.random() * 12}px`);
+      steam.style.setProperty('--steam-drift', `${-20 + Math.random() * 40}px`);
+      steam.style.setProperty('--steam-rotate', `${-10 + Math.random() * 20}deg`);
+      steam.style.setProperty('--steam-duration', `${3 + Math.random() * 1.2}s`);
       container.appendChild(steam);
-      setTimeout(() => steam.remove(), 3000);
+      setTimeout(() => steam.remove(), 4300);
     }
 
     function startKhinkaliCooking() {
@@ -1779,10 +1775,10 @@
       khinkaliIcon.classList.add('boiling');
       khinkaliContainer.classList.add('cooking');
       clearInterval(steamInterval);
-      for (let i = 0; i < 4; i += 1) {
-        setTimeout(spawnSteam, i * 120);
+      for (let i = 0; i < 3; i += 1) {
+        setTimeout(spawnSteam, i * 260);
       }
-      steamInterval = setInterval(spawnSteam, 360);
+      steamInterval = setInterval(spawnSteam, 760);
     }
 
     function stopKhinkaliCooking() {

@@ -22,7 +22,6 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
@@ -837,61 +836,6 @@
       border-top: 1px solid var(--glass-border);
     }
 
-    /* Connections Modal Settings */
-    .connections-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .connection-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--glass-border);
-      padding: 12px 15px;
-      border-radius: 12px;
-    }
-
-    .conn-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .conn-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .conn-desc {
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .conn-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--glass-border);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      transition: all 0.2s;
-    }
-
-    .conn-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .conn-btn.connected {
-      background: rgba(34, 197, 94, 0.2);
-      border-color: rgba(34, 197, 94, 0.4);
-      color: #4ade80;
-    }
-
     /* Responsive */
     @media (max-width: 1200px) {
       .dashboard {
@@ -1080,7 +1024,7 @@
           <div
             style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">
             <div class="settings-title" style="margin-bottom:0; border-bottom:none; padding-bottom:0;"
-              data-i18n="settingsTitle">Dash Settings</div>
+              data-i18n="settingsTitle">Settings</div>
             <button id="langToggleBtn" onclick="toggleLanguage()"
               style="background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); color:white; border-radius:12px; padding:4px 8px; font-size:0.75rem; cursor:pointer;"
               title="Change Language">🇬🇪 KA</button>
@@ -1089,52 +1033,6 @@
             <input type="checkbox" id="toggleAutoHide" onchange="updateSettings()"> <span data-i18n="autoHide">Auto-hide
               during focus</span>
           </label>
-          <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 15px 0;">
-
-          <div class="settings-title" data-i18n="connTitle">Connections (Sync)</div>
-          <div class="connections-list">
-
-            <div class="connection-row">
-              <div class="conn-info">
-                <div class="conn-title">Google Workspace</div>
-                <div class="conn-desc" data-i18n="googleDesc">Calendar & Tasks</div>
-              </div>
-              <button class="conn-btn" id="googleConnectBtn" onclick="handleGoogleConnect()"
-                data-i18n="connectBtn">Connect</button>
-            </div>
-
-            <div class="connection-row">
-              <div class="conn-info">
-                <div class="conn-title">Microsoft 365</div>
-                <div class="conn-desc" data-i18n="msDesc">Outlook & To-Do</div>
-              </div>
-              <button class="conn-btn" onclick="alert('Microsoft OAuth flow coming soon!')"
-                data-i18n="connectBtn">Connect</button>
-            </div>
-
-            <div class="connection-row">
-              <div class="conn-info">
-                <div class="conn-title">Apple Devices</div>
-                <div class="conn-desc" data-i18n="appleDesc">iCloud Reminders (iCal)</div>
-              </div>
-              <button class="conn-btn" onclick="prompt('Enter your public iCloud Calendar Webcal Link:')"
-                data-i18n="connectBtn">Connect</button>
-            </div>
-
-            <div class="connection-row" style="flex-direction: column; align-items: stretch; gap: 8px;">
-              <div class="conn-info">
-                <div class="conn-title" data-i18n="customFeedTitle">Custom Tech Feed (RSS)</div>
-                <div class="conn-desc" data-i18n="customFeedDesc">Override default tech news with your own URL</div>
-              </div>
-              <div style="display:flex; gap: 8px;">
-                <input type="text" id="customFeedUrl" placeholder="https://example.com/rss.xml"
-                  style="flex:1; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem;" />
-                <button class="conn-btn" onclick="saveCustomFeed()" data-i18n="saveBtn">Save</button>
-              </div>
-            </div>
-
-          </div>
-
           <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 15px 0;">
           <button onclick="playStartSound()"
             style="padding: 6px; font-size: 0.9em; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 4px; color: white; cursor: pointer;"
@@ -1299,16 +1197,8 @@
         appTitle: "Khinkali Timer",
         cooked: "Cooked",
         streak: "Day Streak",
-        settingsTitle: "Dash Settings",
+        settingsTitle: "Settings",
         autoHide: "Auto-hide during focus",
-        connTitle: "Connections (Sync)",
-        googleDesc: "Calendar & Tasks",
-        msDesc: "Outlook & To-Do",
-        appleDesc: "iCloud Reminders (iCal)",
-        customFeedTitle: "Custom Tech Feed (RSS)",
-        customFeedDesc: "Override default tech news with your own URL",
-        connectBtn: "Connect",
-        saveBtn: "Save",
         testAlarm: "🔊 Test Alarm Sound",
         newsPanelTitle: "Tech News",
         kanbanPanelTitle: "Daily Tasks",
@@ -1349,14 +1239,9 @@
         alarmStop: "🔇 Stop Alarm",
         rainOn: "🎧 Rain: On",
         rainOff: "🎧 Rain: Off",
-        feedLoading: "Loading feed...",
-        feedError: "Could not load feed. Check connection or URL.",
         storyLoading: "⏳ Preparing photo...",
         storyFail: "Image generation failed.",
         guest: "Guest",
-        googleSync: "Sync",
-        googlePrompt: "Enter your Google OAuth Client ID:",
-        googleError: "Calendar Sync failed. Check Console.",
         eventTag: "📅"
       },
       ka: {
@@ -1365,14 +1250,6 @@
         streak: "დღის სტრიკი",
         settingsTitle: "პარამეტრები (Settings)",
         autoHide: "ავტომატური დამალვა ფოკუსისას",
-        connTitle: "სინქრონიზაცია (Connections)",
-        googleDesc: "კალენდარი და დავალებები",
-        msDesc: "Outlook და დავალებები",
-        appleDesc: "iCloud შეხსენებები",
-        customFeedTitle: "რსს არხი (Custom Feed)",
-        customFeedDesc: "შეცვალეთ სტანდარტული არხი თქვენი ლინკით",
-        connectBtn: "დაკავშირება",
-        saveBtn: "შენახვა",
         testAlarm: "🔊 ტესტ-მაღვიძარა",
         newsPanelTitle: "ტექ-სიახლეები",
         kanbanPanelTitle: "დღის საქმეები",
@@ -1413,14 +1290,9 @@
         alarmStop: "🔇 ხმა გათიშე",
         rainOn: "🎧 <span style='font-size:14px; margin-left:6px;'>წვიმა</span>",
         rainOff: "🎧",
-        feedLoading: "იტვირთება...",
-        feedError: "სიახლეები ვერ ჩაიტვირთა. შეამოწმეთ კავშირი ან მისამართი.",
         storyLoading: "⏳ ვამზადებთ ფოტოს...",
         storyFail: "სურათის გენერაცია ვერ მოხერხდა.",
         guest: "სტუმარი",
-        googleSync: "სინქრონიზაცია",
-        googlePrompt: "შეიყვანეთ Google OAuth Client ID:",
-        googleError: "კალენდრის სინქრონიზაცია ვერ მოხერხდა.",
         eventTag: "📅"
       }
     };
@@ -1513,12 +1385,6 @@
       const langBtn = document.getElementById('langToggleBtn');
       if (langBtn) langBtn.textContent = currentLang === 'en' ? '🇬🇪 KA' : '🇺🇸 EN';
       if (pauseBtn) pauseBtn.textContent = isPaused ? t('btnResume') : t('btnPause');
-
-      // Check for Google OAuth connection
-      const googleBtn = document.getElementById('googleConnectBtn');
-      // We no longer check for client ID in local storage. 
-      // A more robust check would be to determine if the user has a valid OAuth token, 
-      // but for now, the "Connect" button will remain a trigger for synchronization.
 
       // Notify active dynamic components
       updateGreeting();
@@ -2223,23 +2089,6 @@
       }
 
       toggleAutoHideCheckbox.checked = zenSettings.autoHide;
-
-      // Load Custom Feed setting
-      const savedFeed = localStorage.getItem('khinkaliCustomFeed');
-      if (savedFeed) {
-        document.getElementById('customFeedUrl').value = savedFeed;
-      }
-    }
-
-    function saveCustomFeed() {
-      const url = document.getElementById('customFeedUrl').value.trim();
-      if (!parseHttpUrl(url)) {
-        alert('Please enter a valid HTTP or HTTPS URL.');
-        return;
-      }
-      localStorage.setItem('khinkaliCustomFeed', url);
-      alert('Custom feed saved! It will load on next refresh.');
-      fetchNews(); // Reload immediately
     }
 
     // --- Zen Navigation Logic ---
@@ -2582,115 +2431,6 @@
     // Initialize Dashboard
     updateLanguageDOM();
 
-  </script>
-
-  <script>
-    // --- Google Calendar Integration ---
-    // The Application's Google Client ID. 
-    // The owner must configure this once.
-    const GOOGLE_CLIENT_ID = "50306642692-2gsp25nca2oug8qb3r948qsfpdjvibam.apps.googleusercontent.com";
-
-    let tokenClient;
-
-    function initGoogleClient() {
-      if (typeof google === 'undefined') {
-        alert("Google Identity Services failed to load.");
-        return;
-      }
-      tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: GOOGLE_CLIENT_ID,
-        scope: 'https://www.googleapis.com/auth/calendar.readonly',
-        prompt: '', // Allow seamless login for returning users without re-consent
-        callback: async (response) => {
-          if (response.error !== undefined) {
-            console.error("Token error:", response);
-            alert(t('googleError'));
-            return;
-          }
-          await fetchUpcomingEvents(response.access_token);
-        },
-      });
-    }
-
-    function handleGoogleConnect() {
-      if (!GOOGLE_CLIENT_ID) {
-        alert("Developer Error: Google Client ID is not configured in the application source code.");
-        return;
-      }
-
-      initGoogleClient();
-
-      if (tokenClient) {
-        tokenClient.requestAccessToken();
-      }
-    }
-
-    async function fetchUpcomingEvents(token) {
-      try {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const endOfDay = new Date(today);
-        endOfDay.setHours(23, 59, 59, 999);
-
-        const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${today.toISOString()}&timeMax=${endOfDay.toISOString()}&singleEvents=true&orderBy=startTime`;
-
-        const response = await fetch(url, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error("API Fetch failed with status " + response.status);
-        }
-
-        const data = await response.json();
-        const events = data.items || [];
-
-        console.log("Calendar Sync: Successfully fetched events ->", events);
-
-        if (events.length === 0) {
-          alert("Calendar Sync: You have no upcoming events scheduled for today!");
-          return;
-        }
-
-        let newEventsAdded = 0;
-        events.forEach(event => {
-          const title = event.summary || "Busy";
-          let timeStr = "";
-          if (event.start && event.start.dateTime) {
-            const startDate = new Date(event.start.dateTime);
-            timeStr = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " - ";
-          }
-          const taskText = `${t('eventTag')} ${timeStr}${title}`;
-
-          if (!tasks.some(t => t.text === taskText)) {
-            tasks.push({
-              id: 'ev_' + Date.now() + Math.random().toString(36).substring(2, 9),
-              text: taskText,
-              status: 'todo',
-              estimated: 1,
-              actual: 0
-            });
-            newEventsAdded++;
-          }
-        });
-
-        if (newEventsAdded > 0) {
-          saveTasks();
-
-          const btn = document.getElementById('googleConnectBtn');
-          if (btn) {
-            btn.setAttribute('data-i18n', 'googleSync');
-            setI18nContent(btn, 'googleSync');
-            btn.style.background = 'rgba(76, 175, 80, 0.4)';
-          }
-        }
-      } catch (e) {
-        console.error("Calendar fetch error:", e);
-        alert(t('googleError'));
-      }
-    }
   </script>
 
   <audio id="alarm-sound">

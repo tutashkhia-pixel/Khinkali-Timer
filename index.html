@@ -2170,10 +2170,7 @@
       }
     }
     // --- Kanban Board Logic ---
-    let tasks = JSON.parse(localStorage.getItem('khinkaliTasks')) || [
-      { id: 't1', text: 'Plan workday', status: 'todo' },
-      { id: 't2', text: 'Review code', status: 'progress' }
-    ];
+    let tasks = JSON.parse(localStorage.getItem('khinkaliTasks')) || [];
 
     function saveTasks() {
       localStorage.setItem('khinkaliTasks', JSON.stringify(tasks));

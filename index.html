@@ -529,6 +529,10 @@
       max-width: 400px;
     }
 
+    .story-share-btn[hidden] {
+      display: none;
+    }
+
     #timeInput {
       padding: 12px;
       font-size: 16px;
@@ -1140,7 +1144,7 @@
           <button id="pauseBtn" onclick="togglePause()" data-i18n="btnPause">პაუზა</button>
           <button onclick="resetTimer()" data-i18n="btnReset">განულება</button>
         </div>
-        <button onclick="generateStoryImage()"
+        <button id="shareStoryBtn" class="story-share-btn" onclick="generateStoryImage()" hidden
           style="margin-top: 15px; width: 100%; background: linear-gradient(135deg, #FF4B2B, #FF416C); font-weight: bold; padding: 14px; border-radius: 12px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s, box-shadow 0.2s;"
           onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 6px 20px rgba(255, 65, 108, 0.6)';"
           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(255, 65, 108, 0.4)';"><span
@@ -1501,12 +1505,23 @@
       return d.toISOString().split('T')[0];
     }
 
+    function hasShareableFocus() {
+      return (userStats.todayKhinkalis || 0) > 0;
+    }
+
+    function updateShareStoryVisibility() {
+      const shareBtn = document.getElementById('shareStoryBtn');
+      if (!shareBtn) return;
+      shareBtn.hidden = !hasShareableFocus();
+    }
+
     function renderStatsUI(animate = false) {
       const todayDate = getLocalDateString();
 
       // Reset daily count if it's a new day
       if (userStats.lastFocusDate && userStats.lastFocusDate !== todayDate) {
         userStats.todayKhinkalis = 0;
+        localStorage.setItem('khinkaliUserStats', JSON.stringify(userStats));
       }
 
       const countTextEl = document.getElementById('khinkaliCountText');
@@ -1528,6 +1543,8 @@
         countEl.style.transform = 'scale(1.5)';
         setTimeout(() => countEl.style.transform = 'scale(1)', 300);
       }
+
+      updateShareStoryVisibility();
     }
 
     function checkAndCookKhinkali() {
@@ -2472,12 +2489,14 @@
 
     // --- Viral IG Export ---
     async function generateStoryImage() {
+      if (!hasShareableFocus()) return;
+
       const template = document.getElementById('story-template');
       const userNameElem = document.getElementById('story-user-name');
       const khinkaliPlateElem = document.getElementById('story-khinkali-plate');
 
-      const originalShareBtn = document.querySelector('button[onclick="generateStoryImage()"]');
-      const originalBtnText = originalShareBtn.textContent;
+      const originalShareBtn = document.getElementById('shareStoryBtn');
+      const originalBtnContent = originalShareBtn.innerHTML;
       originalShareBtn.textContent = t('storyLoading');
       originalShareBtn.disabled = true;
 
@@ -2489,8 +2508,7 @@
         // Update count using the correct stats key
         clearChildren(khinkaliPlateElem); // Clear previous emojis
 
-        // Ensure at least 1 icon shows if todayKhinkalis is 0
-        const count = Math.max(1, Math.min(userStats.todayKhinkalis || 0, 15));
+        const count = Math.min(userStats.todayKhinkalis || 0, 15);
 
         // Give the plate a flex layout for wrapping
         khinkaliPlateElem.style.display = 'flex';
@@ -2530,7 +2548,7 @@
       } finally {
         // Hide again
         template.style.display = 'none';
-        originalShareBtn.textContent = originalBtnText;
+        originalShareBtn.innerHTML = originalBtnContent;
         originalShareBtn.disabled = false;
       }
     }

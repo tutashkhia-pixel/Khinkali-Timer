@@ -413,6 +413,12 @@
       transition: filter 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
     }
 
+    .khinkali.boiling {
+      animation: boilBounce 0.9s ease-in-out infinite;
+      filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 24px rgba(160, 231, 229, 0.25));
+      opacity: 1;
+    }
+
     .khinkali.cooked {
       filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.9)) brightness(1.2);
       opacity: 1;
@@ -447,6 +453,22 @@
       100% {
         transform: translateX(-50%) translateY(-35px) scaleX(1.5);
         opacity: 0;
+      }
+    }
+
+    @keyframes boilBounce {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-1deg) scale(1);
+      }
+
+      35% {
+        transform: translateY(-10px) rotate(2deg) scale(1.035);
+      }
+
+      65% {
+        transform: translateY(-4px) rotate(-2deg) scale(1.015);
       }
     }
 
@@ -1671,6 +1693,7 @@
               updateDisplay(seconds);
               pauseBtn.textContent = t('btnPause');
               statusMessage.textContent = t('statusRestored');
+              startKhinkaliCooking();
               timerWorker.postMessage({ command: 'start' });
             } else {
               // Time expired while afk
@@ -1698,9 +1721,24 @@
       setTimeout(() => steam.remove(), 3000);
     }
 
+    function startKhinkaliCooking() {
+      const khinkaliIcon = document.getElementById('khinkaliIcon');
+      khinkaliIcon.classList.remove('cooked');
+      khinkaliIcon.classList.add('boiling');
+      clearInterval(steamInterval);
+      spawnSteam();
+      steamInterval = setInterval(spawnSteam, 600);
+    }
+
+    function stopKhinkaliCooking() {
+      clearInterval(steamInterval);
+      steamInterval = null;
+      document.getElementById('khinkaliIcon').classList.remove('boiling');
+    }
+
     function finishTimer() {
       timerWorker.postMessage({ command: 'stop' });
-      clearInterval(steamInterval);
+      stopKhinkaliCooking();
       document.getElementById('khinkaliIcon').classList.add('cooked');
       document.querySelector('.dashboard').classList.remove('focus-mode-active');
       const focusedSeconds = getElapsedFocusSeconds();
@@ -1784,8 +1822,7 @@
         document.querySelector('.dashboard').classList.add('focus-mode-active');
       }
 
-      document.getElementById('khinkaliIcon').classList.remove('cooked');
-      steamInterval = setInterval(spawnSteam, 600);
+      startKhinkaliCooking();
       playStartSound();
       saveTimerState();
       timerWorker.postMessage({ command: 'start' });
@@ -1798,7 +1835,7 @@
 
       if (isPaused) {
         timerWorker.postMessage({ command: 'stop' });
-        clearInterval(steamInterval);
+        stopKhinkaliCooking();
         document.querySelector('.dashboard').classList.remove('focus-mode-active');
         remainingWhenPaused = targetEndTime - Date.now();
         statusMessage.textContent = t('statusPaused');
@@ -1808,7 +1845,7 @@
       } else {
         // Resuming
         if (zenSettings.autoHide) document.querySelector('.dashboard').classList.add('focus-mode-active');
-        steamInterval = setInterval(spawnSteam, 600);
+        startKhinkaliCooking();
         targetEndTime = Date.now() + remainingWhenPaused;
         statusMessage.textContent = `▶️ ${t('btnResume')}`;
         pauseBtn.textContent = t('btnPause');
@@ -1821,7 +1858,7 @@
 
     function resetTimer() {
       timerWorker.postMessage({ command: 'stop' });
-      clearInterval(steamInterval);
+      stopKhinkaliCooking();
       document.getElementById('khinkaliIcon').classList.remove('cooked');
       document.querySelector('.dashboard').classList.remove('focus-mode-active');
       const elapsedFocusSeconds = getElapsedFocusSeconds();

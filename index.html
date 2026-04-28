@@ -2256,16 +2256,26 @@
     alarmAudio.volume = 1.0;
     alarmAudio.src = currentLang === 'ka' ? 'alarm_ka.mp3' : 'alarm_en.mp3';
 
-    // --- PWA Service Worker Registration ---
+    // Remove older offline app-shell caches so stale local previews cannot serve old UI.
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then((registration) => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          })
-          .catch((err) => {
-            console.log('ServiceWorker registration failed: ', err);
-          });
+      window.addEventListener('load', async () => {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+        } catch (err) {
+          console.log('Service worker cleanup skipped:', err);
+        }
+      });
+    }
+
+    if ('caches' in window) {
+      window.addEventListener('load', async () => {
+        try {
+          const keys = await caches.keys();
+          await Promise.all(keys.filter((key) => key.startsWith('khinkali-')).map((key) => caches.delete(key)));
+        } catch (err) {
+          console.log('Cache cleanup skipped:', err);
+        }
       });
     }
   </script>

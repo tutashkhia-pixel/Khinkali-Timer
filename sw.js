@@ -1,69 +1,21 @@
-const CACHE_NAME = 'khinkali-dash-v29';
-const ASSETS_TO_CACHE = [
-    './',
-    './index.html',
-    './terms.html',
-    './privacy.html',
-    './manifest.json',
-    './timerWorker.js',
-    './logo.png',
-    './favicon.png',
-    './alarm_en.mp3',
-    './alarm_ka.mp3',
-    './alarm_es.mp3',
-    './alarm_fr.mp3'
-];
+const CACHE_PREFIX = 'khinkali-';
 
-// Install Event: Cache essential files
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('[Service Worker] Caching App Shell');
-                return cache.addAll(ASSETS_TO_CACHE);
-            })
-            .then(() => self.skipWaiting())
-    );
+    self.skipWaiting();
 });
 
-// Activate Event: Cleanup old caches
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((keyList) => {
-            return Promise.all(keyList.map((key) => {
-                if (key !== CACHE_NAME) {
-                    console.log('[Service Worker] Removing old cache', key);
-                    return caches.delete(key);
-                }
-            }));
-        })
-    );
-    return self.clients.claim();
-});
-
-// Fetch Event: Serve from Cache, Fallback to Network
-self.addEventListener('fetch', (event) => {
-    // Only cache local assets; let external API calls (RSS, Google) go to network
-    if (!event.request.url.startsWith(self.location.origin)) {
-        return;
-    }
-
-    event.respondWith(
-        caches.match(event.request)
-            .then((response) => {
-                if (response) {
-                    return response; // Return strictly from cache (Offline Support)
-                }
-                return fetch(event.request).then((networkResponse) => {
-                    // Dynamic caching for any new assets encountered
-                    if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-                        const responseToCache = networkResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(event.request, responseToCache);
-                        });
-                    }
-                    return networkResponse;
-                });
+        caches.keys()
+            .then((keys) => Promise.all(
+                keys
+                    .filter((key) => key.startsWith(CACHE_PREFIX))
+                    .map((key) => caches.delete(key))
+            ))
+            .then(() => self.registration.unregister())
+            .then(() => self.clients.matchAll({ type: 'window' }))
+            .then((clients) => {
+                clients.forEach((client) => client.navigate(client.url));
             })
     );
 });

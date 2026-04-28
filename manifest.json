@@ -1,7 +1,7 @@
 {
-  "name": "Khinkali Dash",
+  "name": "Khinkali Timer",
   "short_name": "Khinkali",
-  "description": "The ultimate focus workspace and timer.",
+  "description": "A simple focus timer with quick starts, daily progress, and a small Khinkali reward when you finish.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f0c29",

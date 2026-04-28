@@ -1300,21 +1300,11 @@
     // Language: manual preference wins; otherwise geo-detect; fallback to English
     let currentLang = localStorage.getItem('khinkaliLang') || 'en';
 
-    // Geo-detect on first visit (or after cache expires), only if no manual preference set
+    // Geo-detect only for Georgia. Manual preference always wins; otherwise English is the default.
     (function detectGeoLanguage() {
+      localStorage.removeItem('khinkaliGeoLang');
+      localStorage.removeItem('khinkaliGeoTime');
       if (localStorage.getItem('khinkaliLang')) return; // user already chose manually
-
-      const cached = localStorage.getItem('khinkaliGeoLang');
-      const cacheAge = Date.now() - parseInt(localStorage.getItem('khinkaliGeoTime') || '0');
-      const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
-
-      if (cached && cacheAge < ONE_WEEK) {
-        if (cached !== currentLang) {
-          currentLang = cached;
-          // DOM not ready yet — updateLanguageDOM() will be called at end of script init
-        }
-        return;
-      }
 
       // Use Cloudflare's trace endpoint — free, no API key, no rate limits
       fetch('https://www.cloudflare.com/cdn-cgi/trace')
@@ -1322,11 +1312,8 @@
         .then(text => {
           const match = text.match(/loc=([A-Z]{2})/);
           const country = match ? match[1] : '';
-          const detected = country === 'GE' ? 'ka' : 'en';
-          localStorage.setItem('khinkaliGeoLang', detected);
-          localStorage.setItem('khinkaliGeoTime', String(Date.now()));
-          if (!localStorage.getItem('khinkaliLang') && detected !== currentLang) {
-            currentLang = detected;
+          if (!localStorage.getItem('khinkaliLang') && country === 'GE' && currentLang !== 'ka') {
+            currentLang = 'ka';
             updateLanguageDOM(); // Re-render now that we know the country
           }
         })

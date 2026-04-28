@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khinkali Dash | The Digital Supra</title>
-  <meta name="description" content="The ultimate focus workspace and timer. Cook your tasks, build your table, and join the global Georgian diaspora." />
+  <title>Khinkali Timer | Focus, then share your win</title>
+  <meta name="description" content="A simple focus timer with quick starts, daily progress, and a small Khinkali reward when you finish." />
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,8 +15,8 @@
   
   <!-- Open Graph / Social -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Khinkali Dash">
-  <meta property="og:description" content="The ultimate focus workspace and timer. Cook your tasks, build your table, and join the global Georgian diaspora.">
+  <meta property="og:title" content="Khinkali Timer">
+  <meta property="og:description" content="Start a focus session fast, track today's progress, and cook a Khinkali when you finish.">
   <meta property="og:image" content="https://khinkali-dash.netlify.app/logo.png">
   <meta name="twitter:card" content="summary_large_image">
   <link
@@ -550,6 +550,30 @@
       border-color: var(--accent-color);
     }
 
+    .quick-duration-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .quick-duration-btn {
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid var(--glass-border);
+      color: rgba(255, 255, 255, 0.78);
+      padding: 9px 10px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      flex: none;
+    }
+
+    .quick-duration-btn:hover,
+    .quick-duration-btn.active {
+      background: rgba(166, 92, 241, 0.24);
+      border-color: rgba(166, 92, 241, 0.7);
+      color: white;
+    }
+
     .button-group {
       display: flex;
       justify-content: center;
@@ -582,7 +606,7 @@
       display: flex;
       justify-content: center;
       gap: 8px;
-      margin-top: 15px;
+      margin-top: 12px;
       flex-wrap: wrap;
     }
 
@@ -1001,6 +1025,15 @@
         padding: 10px;
       }
 
+      .quick-duration-group {
+        gap: 6px;
+      }
+
+      .quick-duration-btn {
+        padding: 8px 6px;
+        font-size: 0.85rem;
+      }
+
       .button-group button {
         padding: 10px;
         font-size: 0.9rem;
@@ -1027,7 +1060,7 @@
 <body>
 
   <div class="top-bar">
-    <h2 data-i18n="appTitle">Khinkali Dash</h2>
+    <h2 data-i18n="appTitle">Khinkali Timer</h2>
     <div class="top-bar-meta">
       <!-- Gamification Stats -->
       <div id="statsContainer"
@@ -1137,7 +1170,12 @@
       <div id="statusMessage">დავიწყოთ?</div>
 
       <div class="timer-controls">
-        <input id="timeInput" placeholder="დრო (მაგ. 25წ, 1სთ30წ, 90წმ)" data-i18n="timerPlaceholder"
+        <div class="quick-duration-group" aria-label="Quick focus durations">
+          <button type="button" class="quick-duration-btn" onclick="setQuickDuration('15m', this)">15m</button>
+          <button type="button" class="quick-duration-btn active" onclick="setQuickDuration('25m', this)">25m</button>
+          <button type="button" class="quick-duration-btn" onclick="setQuickDuration('50m', this)">50m</button>
+        </div>
+        <input id="timeInput" value="25m" placeholder="დრო (მაგ. 25წ, 1სთ30წ, 90წმ)" data-i18n="timerPlaceholder"
           onfocus="this.placeholder = ''" onblur="this.placeholder = t('timerPlaceholder')" autocomplete="off" />
         <div class="button-group">
           <button onclick="startTimer()" data-i18n="btnStart">შევუდგეთ</button>
@@ -1219,7 +1257,6 @@
   </div>
   <!-- Zen Navigation Bar -->
   <nav class="zen-nav" id="zenNav">
-    <button id="nav-news" onclick="toggleZenPanel('news')" title="Tech Feed" style="font-size: 1.5rem; padding: 10px 15px; background: transparent; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">📰</button>
     <button id="nav-tasks" onclick="toggleZenPanel('tasks')" title="Tasks" style="font-size: 1.5rem; padding: 10px 15px; background: transparent; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">✅</button>
     <button id="nav-atmosphere" onclick="toggleZenPanel('atmosphere')" title="Atmosphere" style="font-size: 1.5rem; padding: 10px 15px; background: transparent; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">🎧</button>
   </nav>
@@ -1252,14 +1289,14 @@
       <a href="./terms.html" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4); margin: 0 10px;">Terms of Service</a> |
       <span style="margin: 0 10px;">Contact: <a href="mailto:hello@techedgelabs.com" style="color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.4);">hello@techedgelabs.com</a></span>
     </div>
-    <small style="opacity: 0.5;" data-i18n="footerText">Khinkali Dash v2.0 &copy; 2026 TechEdge Labs LLC</small>
+    <small style="opacity: 0.5;" data-i18n="footerText">Khinkali Timer v2.0 &copy; 2026 TechEdge Labs LLC</small>
   </footer>
 
   <script>
     // --- Internationalization (i18n) Engine ---
     const translations = {
       en: {
-        appTitle: "Khinkali Dash",
+        appTitle: "Khinkali Timer",
         cooked: "Cooked",
         streak: "Day Streak",
         settingsTitle: "Dash Settings",
@@ -1297,10 +1334,11 @@
         zenTasks: "✅ Tasks",
         zenAtmo: "🎧 Atmosphere",
         storyTitle: "MY HARVEST TODAY",
-        footerText: "Khinkali Dash v2000",
-        welcomeGreeting: "Hello,",
+        footerText: "Khinkali Timer v2.0",
+        welcomeGreeting: "Ready to focus?",
+        welcomeSubhead: "Pick a time and cook one focused session.",
         namePlaceholder: "What is your name?",
-        statusReady: "Ready to start?",
+        statusReady: "Press Start when you're ready.",
         statusFocusing: "Khinkali is boiling...",
         statusPaused: "⏸ Paused",
         statusPausedRestored: "⏸ Paused (Restored)",
@@ -1322,7 +1360,7 @@
         eventTag: "📅"
       },
       ka: {
-        appTitle: "Khinkali Dash",
+        appTitle: "Khinkali Timer",
         cooked: "მოხარშული",
         streak: "დღის სტრიკი",
         settingsTitle: "პარამეტრები (Settings)",
@@ -1360,10 +1398,11 @@
         zenTasks: "✅ საქმეები",
         zenAtmo: "🎧 ატმოსფერო",
         storyTitle: "ჩემი დღევანდელი მოსავალი",
-        footerText: "Khinkali Dash v2.0",
-        welcomeGreeting: "გამარჯობა,",
+        footerText: "Khinkali Timer v2.0",
+        welcomeGreeting: "მზად ხარ ფოკუსისთვის?",
+        welcomeSubhead: "აირჩიე დრო და მოხარშე ერთი ფოკუს-სესია.",
         namePlaceholder: "რა გქვია?",
-        statusReady: "შევუდგეთ?",
+        statusReady: "როცა მზად იქნები, დააჭირე დაწყებას.",
         statusFocusing: "ხინკალი იხარშება...",
         statusPaused: "⏸ შესვენება",
         statusPausedRestored: "⏸ შესვენება (აღდგენილი)",
@@ -1487,7 +1526,6 @@
       renderTasks();
       updateDisplay();
       if (!isPaused && seconds <= 0) document.getElementById("statusMessage").textContent = t('statusReady');
-      if (typeof fetchNews === 'function') fetchNews();
     }
 
     // --- Gamification & Stats Engine ---
@@ -2058,6 +2096,15 @@
       }
     });
 
+    function setQuickDuration(value, selectedButton) {
+      timeInput.value = value;
+      document.querySelectorAll('.quick-duration-btn').forEach(btn => btn.classList.remove('active'));
+      if (selectedButton) selectedButton.classList.add('active');
+      if (seconds <= 0 && !isPaused) {
+        statusMessage.textContent = t('statusReady');
+      }
+    }
+
     document.addEventListener('keydown', function (event) {
       if (event.code === 'Space' || event.key === ' ') {
         if (document.activeElement.tagName !== 'INPUT') {
@@ -2083,7 +2130,7 @@
       const savedName = localStorage.getItem('khinkaliUserName');
       const greetingElement = document.getElementById('greetingText');
 
-      greetingElement.style.fontSize = "2.5rem";
+      greetingElement.style.fontSize = "2.4rem";
       greetingElement.style.lineHeight = "1.2";
       greetingElement.style.marginBottom = "1rem";
 
@@ -2114,33 +2161,14 @@
         greetingElement.append(nameSpan, `, ${phrase} `, changeButton);
       } else {
         clearChildren(greetingElement);
-        greetingElement.append(`${t('welcomeGreeting')} ${t('namePlaceholder')}`);
-        greetingElement.appendChild(document.createElement('br'));
+        const title = document.createElement('div');
+        title.textContent = t('welcomeGreeting');
 
-        const inputWrap = document.createElement('div');
-        inputWrap.style.cssText = 'display:flex; justify-content:center; align-items:flex-end; gap:10px; width:min(100%, 520px); max-width:520px; margin: 0 auto;';
+        const subhead = document.createElement('div');
+        subhead.textContent = t('welcomeSubhead');
+        subhead.style.cssText = 'font-size:1rem; line-height:1.45; color:rgba(255,255,255,0.68); letter-spacing:0; font-weight:400; margin-top:10px;';
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.id = 'nameInput';
-        input.placeholder = t('namePlaceholder');
-        input.autocomplete = 'off';
-        input.style.cssText = 'background:transparent; border:none; border-bottom: 2px solid var(--accent-color); color: white; min-width: 0; width:100%; flex: 1 1 auto; text-align:center; font-family: inherit; font-size: clamp(1.4rem, 4vw, 2.2rem); outline:none; margin-top: 10px; padding-bottom: 5px;';
-        input.addEventListener('keypress', (event) => {
-          if (event.key === 'Enter') saveName(input.value);
-        });
-        input.addEventListener('blur', () => {
-          setTimeout(() => saveName(input.value), 200);
-        });
-
-        const saveButton = document.createElement('button');
-        saveButton.type = 'button';
-        saveButton.style.cssText = 'background:var(--accent-color); color:var(--bg-color); border:none; border-radius:50%; width:40px; height:40px; min-width:40px; flex:0 0 40px; font-size:1.4rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-bottom:5px;';
-        saveButton.textContent = '✓';
-        saveButton.addEventListener('click', () => saveName(input.value));
-
-        inputWrap.append(input, saveButton);
-        greetingElement.appendChild(inputWrap);
+        greetingElement.append(title, subhead);
       }
     }
 
@@ -2218,7 +2246,7 @@
     function toggleZenPanel(panelType) {
       if (panelType === 'news') {
         document.querySelector('.news-panel').classList.toggle('active');
-        document.getElementById('nav-news').classList.toggle('active');
+        document.getElementById('nav-news')?.classList.toggle('active');
 
         // Auto-close others
         document.querySelector('.kanban-panel').classList.remove('active');
@@ -2230,7 +2258,7 @@
         document.getElementById('nav-tasks').classList.toggle('active');
 
         document.querySelector('.news-panel').classList.remove('active');
-        document.getElementById('nav-news').classList.remove('active');
+        document.getElementById('nav-news')?.classList.remove('active');
         document.getElementById('atmospherePopover').classList.remove('active');
         document.getElementById('nav-atmosphere').classList.remove('active');
       } else if (panelType === 'atmosphere') {
@@ -2240,7 +2268,7 @@
         document.querySelector('.kanban-panel').classList.remove('active');
         document.getElementById('nav-tasks').classList.remove('active');
         document.querySelector('.news-panel').classList.remove('active');
-        document.getElementById('nav-news').classList.remove('active');
+        document.getElementById('nav-news')?.classList.remove('active');
       }
     }
 
@@ -2305,8 +2333,6 @@
         newsFeed.appendChild(errorMessage);
       }
     }
-    fetchNews();
-
     // --- Kanban Board Logic ---
     let tasks = JSON.parse(localStorage.getItem('khinkaliTasks')) || [
       { id: 't1', text: 'Plan workday', status: 'todo' },

@@ -257,7 +257,7 @@
     /* Zen Navigation */
     .zen-nav {
       position: fixed;
-      bottom: 25px;
+      bottom: calc(25px + env(safe-area-inset-bottom));
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -304,7 +304,7 @@
     /* Atmosphere Popover */
     .atmosphere-popover {
       position: fixed;
-      bottom: 90px;
+      bottom: calc(90px + env(safe-area-inset-bottom));
       left: 50%;
       transform: translateX(-50%) translateY(20px);
       opacity: 0;
@@ -796,6 +796,10 @@
     }
 
     /* Footer */
+    .legal-footer {
+      margin-bottom: calc(96px + env(safe-area-inset-bottom));
+    }
+
     .footer {
       text-align: center;
       padding: 1rem;
@@ -919,6 +923,18 @@
 
       .top-bar .date-display {
         display: none;
+      }
+
+      .zen-nav {
+        position: static;
+        transform: none;
+        width: max-content;
+        max-width: calc(100% - 32px);
+        margin: 24px auto 18px;
+      }
+
+      .legal-footer {
+        margin-bottom: 0;
       }
 
       .timer-panel {

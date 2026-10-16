@@ -12,8 +12,18 @@
     "notifications"
   ],
   "host_permissions": [
-    "http://*/*",
-    "https://*/*"
+    "*://reddit.com/*",
+    "*://facebook.com/*",
+    "*://instagram.com/*",
+    "*://tiktok.com/*",
+    "*://twitter.com/*",
+    "*://x.com/*",
+    "*://*.reddit.com/*",
+    "*://*.facebook.com/*",
+    "*://*.instagram.com/*",
+    "*://*.tiktok.com/*",
+    "*://*.twitter.com/*",
+    "*://*.x.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -25,7 +35,9 @@
         "http://127.0.0.1:*/*",
         "https://khinkali-dash.netlify.app/*"
       ],
-      "js": ["content.js"]
+      "js": [
+        "content.js"
+      ]
     }
   ]
 }
